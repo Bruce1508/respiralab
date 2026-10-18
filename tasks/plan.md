@@ -6,7 +6,7 @@ order = task order, same as tasks.json. One commit per task, per the build
 skill's default loop (RED → GREEN → regression → ruff → commit).
 
 ## Phase: Deep Learning (D23–D28)
-- [ ] **D23** — Train minimal compact CNN over log-Mel, fixed config. Deliverable: `cnn.py`, `results/E03`. Acceptance: loss decreases on tiny overfit smoke batch; checkpoint saved.
+- [x] **D23** — Train minimal compact CNN over log-Mel, fixed config. Deliverable: `cnn.py`, `results/E03`. Acceptance: loss decreases on tiny overfit smoke batch; checkpoint saved. (commits `425236d`, `a1ce5bf`)
 - [ ] **D24** — Validation logging, early stopping, checkpoints, resume. Deliverable: `training.py`, `train_cnn.yaml`. Acceptance: run can resume; best chosen by validation only.
 - [ ] **D25** — Training-only augmentations; test inherited patient IDs. Deliverable: `augment.py`, tests. Acceptance: no augmented child assigned to val/test.
 - [ ] **D26** — Controlled CNN training over 3 seeds; capture compute cost. Deliverable: `results/E03_seed_runs`. Acceptance: each run records config/commit/hardware/runtime.
