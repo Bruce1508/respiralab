@@ -1,0 +1,142 @@
+{
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "patient_counts": {
+    "train": 84,
+    "val": 21,
+    "test": 21
+  },
+  "n_cycles": {
+    "train": 4649,
+    "dev": 1108
+  },
+  "baselines": [
+    {
+      "strategy": "majority",
+      "macro_f1": 0.17995378393991912,
+      "per_class": {
+        "normal": {
+          "precision": 0.5622743682310469,
+          "recall": 1.0,
+          "f1": 0.7198151357596765,
+          "support": 623
+        },
+        "crackle": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 291
+        },
+        "wheeze": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 126
+        },
+        "both": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 68
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "normal",
+          "crackle",
+          "wheeze",
+          "both"
+        ],
+        "matrix": [
+          [
+            623,
+            0,
+            0,
+            0
+          ],
+          [
+            291,
+            0,
+            0,
+            0
+          ],
+          [
+            126,
+            0,
+            0,
+            0
+          ],
+          [
+            68,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    },
+    {
+      "strategy": "stratified",
+      "macro_f1": 0.2549229954825123,
+      "per_class": {
+        "normal": {
+          "precision": 0.5631578947368421,
+          "recall": 0.5152487961476726,
+          "f1": 0.5381391450125733,
+          "support": 623
+        },
+        "crackle": {
+          "precision": 0.26582278481012656,
+          "recall": 0.28865979381443296,
+          "f1": 0.27677100494233936,
+          "support": 291
+        },
+        "wheeze": {
+          "precision": 0.11450381679389313,
+          "recall": 0.11904761904761904,
+          "f1": 0.11673151750972763,
+          "support": 126
+        },
+        "both": {
+          "precision": 0.07692307692307693,
+          "recall": 0.10294117647058823,
+          "f1": 0.0880503144654088,
+          "support": 68
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "normal",
+          "crackle",
+          "wheeze",
+          "both"
+        ],
+        "matrix": [
+          [
+            321,
+            176,
+            77,
+            49
+          ],
+          [
+            142,
+            84,
+            34,
+            31
+          ],
+          [
+            71,
+            36,
+            15,
+            4
+          ],
+          [
+            36,
+            20,
+            5,
+            7
+          ]
+        ]
+      }
+    }
+  ]
+}
