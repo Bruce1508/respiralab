@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import pytest
@@ -104,6 +106,10 @@ def test_analyze_recording_rejects_invalid_bounds():
         analyze_recording(pipeline, audio, sr, bounds=(0.9, 0.1))
 
 
+@pytest.mark.skipif(
+    not Path("artifacts/features_cache").is_dir(),
+    reason="requires the real ICBHI feature cache (gitignored, not present on a fresh clone/CI)",
+)
 def test_build_frozen_predictor_reproduces_committed_val_macro_f1():
     from respiralab.evaluation.metrics import score_predictions
     from respiralab.inference.predict import build_frozen_predictor
