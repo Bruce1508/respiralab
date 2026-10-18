@@ -22,19 +22,33 @@ device.** Sound-event labels are not disease labels.
 - No fabricated scores; every reported number cites split, n, seed, config.
 - Never claim medical diagnosis.
 
-## Remaining scope (D23–D42)
-Phases: Deep Learning (D23–D28, ends at Gate G4 model freeze) → Validation
-(D29–D34, includes the one-time final test at D29 and Gate G5) → Product
-(D35–D40) → Launch (D41–D42, Gate G6).
+## Status
+D01–D42 complete, Gates G1–G6 PASS. v1.0 is published (public repo, live Streamlit
+Cloud demo). D43 added `docs/adr/0001-v2-pretrained-encoder-and-evaluation.md`
+(required by the data contract: v2 changes sample rate + selection protocol).
+D44–D45 done (grouped-CV reference, calibration). v1's frozen numbers and code
+paths are untouched by any of this.
+
+## Remaining scope (D46–D57) — v2, per ADR-0001
+Phases: Encoder input + selection (D46–D51, ends at Gate G7 model freeze) →
+Test + external validation (D52–D55) → Serving (D56) → Launch (D57, Gate G8).
 
 Exact per-task deliverables/acceptance criteria live in `../RespiraLab_Project_Pack/planning/tasks.json`
-(D23 onward) — `tasks/plan.md` in this repo mirrors them for the build loop.
+(D46 onward) — `tasks/plan.md` in this repo mirrors them for the build loop.
 
 ## Gates requiring explicit human sign-off (hard stops, not just checklist items)
-- **G4 (after D28):** "DO NOT open final test" until model config/threshold
-  frozen. Requires logged go/no-go in `PROGRESS_LOG.md` before D29 runs.
-- **G5 (after D34):** one-time test report + model card; no diagnosis claims.
-- **G6 (after D42):** fresh-clone reproduction before calling it released.
+- **G7 (after D52):** v2 model/temperature/weights frozen on grouped-CV evidence
+  only — no primary-test numbers may have informed the freeze.
+- **G8 (after D57):** one-time second-exposure test report, external zero-shot
+  report, hash-verified serving, updated model card, fresh clone.
+
+## Structural blockers (not code — need a human or external resource)
+- **D47** needs a real pretrained-encoder checkpoint selected, its license
+  checked, and its actual input sample rate confirmed (ADR-0001 assumes 16 kHz
+  pending this). Requires downloading model weights from an external host.
+- **D54** needs the user to download SPRSound or HF_Lung and record its license
+  terms — "never invent... dataset access" (AGENTS.md). Cannot be done without
+  the user's explicit action.
 
 ## Stack (already in place, do not re-architect)
 Python 3.11 (`uv`), numpy/scipy/soundfile/librosa/scikit-learn, PyTorch,
