@@ -34,7 +34,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D40** — Inference latency/memory benchmark + packaged release. `reports/performance.md`. (commit `b522e2f`)
 
 ## Phase: Launch (D41–D42)
-- [ ] **D41** — Honest technical report, citations, figure captions. `reports/final_report.md`.
+- [x] **D41** — Honest technical report, citations, figure captions. `reports/final_report.md`. (commit `de8eb4c`)
 - [ ] **D42** — Fresh-clone walkthrough, demo, publish v1.0. Acceptance: **Gate G6**.
 
 > **STOP — Gate G6 + explicit user go-ahead required before anything is published/pushed.**
