@@ -40,6 +40,28 @@ def load_split_features(
     return X, y
 
 
+def score_predictions(y_dev: np.ndarray, y_pred: np.ndarray) -> dict:
+    """macro-F1 (docs/03's primary metric) + per-class precision/recall/F1 + confusion matrix.
+
+    Shared by every model's dev-score report (D15 dummy baselines, D16+
+    real classifiers) so the result shape stays identical across E00/E01/...
+    """
+    precision, recall, f1, support = precision_recall_fscore_support(
+        y_dev, y_pred, labels=LABEL_ORDER, zero_division=0
+    )
+    cm = confusion_matrix(y_dev, y_pred, labels=LABEL_ORDER)
+    return {
+        "macro_f1": float(
+            f1_score(y_dev, y_pred, labels=LABEL_ORDER, average="macro", zero_division=0)
+        ),
+        "per_class": {
+            label: {"precision": float(p), "recall": float(r), "f1": float(f), "support": int(s)}
+            for label, p, r, f, s in zip(LABEL_ORDER, precision, recall, f1, support, strict=True)
+        },
+        "confusion_matrix": {"labels": list(LABEL_ORDER), "matrix": cm.tolist()},
+    }
+
+
 def evaluate_dummy(
     name: str,
     strategy: str,
@@ -51,22 +73,7 @@ def evaluate_dummy(
     clf = DummyClassifier(strategy=strategy, random_state=DUMMY_SEED)
     clf.fit(X_train, y_train)
     y_pred = clf.predict(X_dev)
-
-    precision, recall, f1, support = precision_recall_fscore_support(
-        y_dev, y_pred, labels=LABEL_ORDER, zero_division=0
-    )
-    cm = confusion_matrix(y_dev, y_pred, labels=LABEL_ORDER)
-    return {
-        "strategy": name,
-        "macro_f1": float(
-            f1_score(y_dev, y_pred, labels=LABEL_ORDER, average="macro", zero_division=0)
-        ),
-        "per_class": {
-            label: {"precision": float(p), "recall": float(r), "f1": float(f), "support": int(s)}
-            for label, p, r, f, s in zip(LABEL_ORDER, precision, recall, f1, support, strict=True)
-        },
-        "confusion_matrix": {"labels": list(LABEL_ORDER), "matrix": cm.tolist()},
-    }
+    return {"strategy": name, **score_predictions(y_dev, y_pred)}
 
 
 def patient_counts(manifest_df: pd.DataFrame) -> dict[str, int]:
