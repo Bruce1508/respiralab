@@ -30,7 +30,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D36** — Streamlit upload + waveform + spectrogram UI. `app/streamlit_app.py`. (commit `5ad0e02`)
 - [x] **D37** — Probabilities, method label, provenance in UI. (commit `5ad0e02`; screenshot sub-deliverable not produced - no browser access this session)
 - [x] **D38** — Synthetic integration fixtures + E2E UI smoke. `tests/integration/`. (commit `b4904aa`)
-- [ ] **D39** — CI lint/test/import checks + sensitive-data scan. `ci.yml`.
+- [x] **D39** — CI lint/test/import checks + sensitive-data scan. `ci.yml`. (commit `994a010`; also fixed a real CI-breaking test gap)
 - [ ] **D40** — Inference latency/memory benchmark + packaged release. `reports/performance.md`.
 
 ## Phase: Launch (D41–D42)
