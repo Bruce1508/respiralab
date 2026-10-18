@@ -16,7 +16,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 > Gate G4 PASS logged in PROGRESS_LOG.md (2026-10-18), all 5 go/no-go questions answered with citations. User authorized continuing without a live pause at each remaining gate, provided criteria are genuinely met. Proceeding to D29.
 
 ## Phase: Validation (D29–D34)
-- [ ] **D29** — Run FINAL untouched primary test evaluation, report once. Deliverable: `reports/final_test_results.json`. Acceptance: no subsequent test-driven tuning; class counts included. **Irreversible — test is opened exactly once here.**
+- [x] **D29** — Run FINAL untouched primary test evaluation, report once. Deliverable: `reports/final_test_results.json`. Acceptance: no subsequent test-driven tuning; class counts included. **Irreversible — test is opened exactly once here.** (commit `ce91dbb`, macro_f1_test=0.2861, test now closed — no further tuning permitted)
 - [ ] **D30** — Official-split comparative experiment, separate protocol. Deliverable: `reports/official_protocol_comparison.md`.
 - [ ] **D31** — Fixed-noise/SNR robustness checks, no model changes. Deliverable: `reports/robustness.md`.
 - [ ] **D32** — Minority-class failure inspection by device/site/error type. Deliverable: `reports/error_analysis.md`.
