@@ -32,6 +32,14 @@ class ParsedFilename:
     device: str
 
 
+@dataclass
+class RejectionRow:
+    """Shared rejection record: one row per file that failed audit/parsing, never silently dropped."""
+
+    filename: str
+    reason: str
+
+
 class FilenameParseError(ValueError):
     """Raised with the offending stem so callers can log rejections by filename."""
 

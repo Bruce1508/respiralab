@@ -1,0 +1,3 @@
+filename,reason
+filename_differences.txt,filename_differences.txt: filename does not match ICBHI 5-part pattern: 'filename_differences'
+filename_format.txt,filename_format.txt: filename does not match ICBHI 5-part pattern: 'filename_format'

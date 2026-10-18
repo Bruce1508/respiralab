@@ -16,7 +16,7 @@ from pathlib import Path
 
 import soundfile as sf
 
-from respiralab.data.filenames import FilenameParseError, parse_icbhi_filename
+from respiralab.data.filenames import FilenameParseError, RejectionRow, parse_icbhi_filename
 from respiralab.data.inventory import sha256_of_file
 
 EXPECTED_RECORDINGS = 920
@@ -37,12 +37,6 @@ class DatasetInventoryRow:
     size_bytes: int
     sha256: str
     source_filename: str
-
-
-@dataclass
-class RejectionRow:
-    filename: str
-    reason: str
 
 
 def build_dataset_inventory(root: Path) -> tuple[list[DatasetInventoryRow], list[RejectionRow]]:
