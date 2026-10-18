@@ -1,0 +1,20 @@
+# Dataset and derived artifacts — never commit real audio/data (see docs/03_DATA_AND_EVALUATION_CONTRACT.md)
+data/raw/
+data/interim/
+data/processed/
+artifacts/
+reports/figures/*.png
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
