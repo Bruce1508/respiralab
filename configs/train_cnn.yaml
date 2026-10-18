@@ -1,0 +1,6 @@
+model: compact_cnn
+seed: 42
+lr: 0.001
+batch_size: 32
+max_epochs: 3
+patience: 5
