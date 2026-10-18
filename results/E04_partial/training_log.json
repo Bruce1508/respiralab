@@ -1,0 +1,32 @@
+{
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "config": {
+    "model": "compact_cnn",
+    "seed": 42,
+    "lr": 0.001,
+    "batch_size": 32,
+    "max_epochs": 2,
+    "patience": 5
+  },
+  "resumed_from": null,
+  "n_epochs_run": 2,
+  "stopped_early": false,
+  "best_val_macro_f1": 0.19119306893632704,
+  "history": [
+    {
+      "epoch": 0,
+      "train_loss": 1.1624824934350364,
+      "val_loss": 1.2366590710753569,
+      "val_macro_f1": 0.19119306893632704,
+      "improved": true
+    },
+    {
+      "epoch": 1,
+      "train_loss": 1.1382715135883275,
+      "val_loss": 1.106294009659695,
+      "val_macro_f1": 0.18972797487693094,
+      "improved": false
+    }
+  ],
+  "checkpoint_path": "results/E04_partial/checkpoint.pt"
+}
