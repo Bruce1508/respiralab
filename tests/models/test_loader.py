@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import pytest
 import soundfile as sf
+import torch
 
 from respiralab.models.dataset import (
     LABEL_TO_INDEX,
@@ -92,6 +93,46 @@ def test_dataset_produces_identical_fixed_shape_for_variable_duration_and_native
     assert item_short["label"].item() == LABEL_TO_INDEX["normal"]
     assert item_long["label"].item() == LABEL_TO_INDEX["crackle"]
     assert item_short["cycle_id"] == "c_short"
+
+
+def test_dataset_applies_augment_fn_only_to_flagged_rows(tmp_path):
+    from respiralab.models.augment import make_augment_fn
+
+    _write_wav(tmp_path / "rec.wav", duration_s=1.0, sample_rate=4000)
+    cycles_df = pd.DataFrame(
+        [
+            {
+                "cycle_id": "c_plain",
+                "record_id": "rec",
+                "start_s": 0.0,
+                "end_s": 1.0,
+                "label4": "normal",
+                "is_augmented": False,
+                "aug_seed": 0,
+            },
+            {
+                "cycle_id": "c_aug",
+                "record_id": "rec",
+                "start_s": 0.0,
+                "end_s": 1.0,
+                "label4": "normal",
+                "is_augmented": True,
+                "aug_seed": 1,
+            },
+        ]
+    )
+
+    plain_dataset = LogMelCycleDataset(cycles_df, tmp_path, target_sample_rate=4000, target_n_samples=400)
+    augmented_dataset = LogMelCycleDataset(
+        cycles_df, tmp_path, target_sample_rate=4000, target_n_samples=400, augment_fn=make_augment_fn()
+    )
+
+    plain_item = plain_dataset[0]
+    augment_hook_on_unflagged_row = augmented_dataset[0]
+    augmented_item = augmented_dataset[1]
+
+    assert torch.equal(plain_item["log_mel"], augment_hook_on_unflagged_row["log_mel"])
+    assert not torch.equal(plain_item["log_mel"], augmented_item["log_mel"])
 
 
 def test_dataset_raises_on_unknown_label(tmp_path):

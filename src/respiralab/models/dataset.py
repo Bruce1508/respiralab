@@ -45,11 +45,13 @@ class LogMelCycleDataset(Dataset):
         audio_dir: Path,
         target_sample_rate: int = TARGET_SAMPLE_RATE,
         target_n_samples: int = TARGET_N_SAMPLES,
+        augment_fn=None,
     ) -> None:
         self.cycles_df = cycles_df.reset_index(drop=True)
         self.audio_dir = Path(audio_dir)
         self.target_sample_rate = target_sample_rate
         self.target_n_samples = target_n_samples
+        self.augment_fn = augment_fn
         self._audio_cache: dict[str, tuple[np.ndarray, int]] = {}
 
     def __len__(self) -> int:
@@ -65,6 +67,8 @@ class LogMelCycleDataset(Dataset):
         row = self.cycles_df.iloc[idx]
         audio, native_sr = self._load_record_audio(row["record_id"])
         cycle_audio = extract_cycle(audio, native_sr, row["start_s"], row["end_s"])
+        if self.augment_fn is not None and row.get("is_augmented", False):
+            cycle_audio = self.augment_fn(cycle_audio, row)
         resampled = resample_audio(cycle_audio, native_sr, self.target_sample_rate)
         fixed_audio, n_real_samples = pad_or_crop(resampled, self.target_n_samples)
         log_mel = compute_log_mel(fixed_audio, self.target_sample_rate)
