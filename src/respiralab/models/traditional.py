@@ -11,7 +11,8 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 
 from respiralab.data.inventory import sha256_of_file
-from respiralab.models.baseline import load_split_features, patient_counts, score_predictions
+from respiralab.evaluation.metrics import score_predictions
+from respiralab.models.baseline import load_split_features, patient_counts
 
 LOGREG_SEED = 42
 

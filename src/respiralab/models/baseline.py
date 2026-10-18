@@ -7,11 +7,10 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 from sklearn.dummy import DummyClassifier
-from sklearn.metrics import confusion_matrix, f1_score, precision_recall_fscore_support
 
 from respiralab.data.inventory import sha256_of_file
+from respiralab.evaluation.metrics import score_predictions
 
-LABEL_ORDER = ("normal", "crackle", "wheeze", "both")
 DUMMY_SEED = 42
 BASELINES = (("majority", "most_frequent"), ("stratified", "stratified"))
 
@@ -26,23 +25,6 @@ def load_split_features(
     X = np.stack([np.load(cache_dir / p) for p in rows["cache_path"]])
     y = rows["label4"].to_numpy()
     return (X, y)
-
-
-def score_predictions(y_dev: np.ndarray, y_pred: np.ndarray) -> dict:
-    precision, recall, f1, support = precision_recall_fscore_support(
-        y_dev, y_pred, labels=LABEL_ORDER, zero_division=0
-    )
-    cm = confusion_matrix(y_dev, y_pred, labels=LABEL_ORDER)
-    return {
-        "macro_f1": float(
-            f1_score(y_dev, y_pred, labels=LABEL_ORDER, average="macro", zero_division=0)
-        ),
-        "per_class": {
-            label: {"precision": float(p), "recall": float(r), "f1": float(f), "support": int(s)}
-            for label, p, r, f, s in zip(LABEL_ORDER, precision, recall, f1, support, strict=True)
-        },
-        "confusion_matrix": {"labels": list(LABEL_ORDER), "matrix": cm.tolist()},
-    }
 
 
 def evaluate_dummy(
