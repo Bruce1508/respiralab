@@ -18,7 +18,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 ## Phase: Validation (D29–D34)
 - [x] **D29** — Run FINAL untouched primary test evaluation, report once. Deliverable: `reports/final_test_results.json`. Acceptance: no subsequent test-driven tuning; class counts included. **Irreversible — test is opened exactly once here.** (commit `ce91dbb`, macro_f1_test=0.2861, test now closed — no further tuning permitted)
 - [x] **D30** — Official-split comparative experiment, separate protocol. Deliverable: `reports/official_protocol_comparison.md`. (committed)
-- [ ] **D31** — Fixed-noise/SNR robustness checks, no model changes. Deliverable: `reports/robustness.md`.
+- [x] **D31** — Fixed-noise/SNR robustness checks, no model changes. Deliverable: `reports/robustness.md`. (committed)
 - [ ] **D32** — Minority-class failure inspection by device/site/error type. Deliverable: `reports/error_analysis.md`.
 - [ ] **D33** — Single-factor ablation on dev data only. Deliverable: `reports/ablation.md`.
 - [ ] **D34** — Model card + clinical/recording caveats. Deliverable: `reports/model_card.md`. Acceptance: **Gate G5** — no diagnosis claims, limitations explicit.
