@@ -1,0 +1,157 @@
+{
+  "protocol": "temperature scaled on out-of-fold CV predictions (ADR-0001 D5); never on test",
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "n_trainval_patients": 105,
+  "n_trainval_cycles": 5757,
+  "seed": 42,
+  "model": "logistic_regression (E01 pipeline)",
+  "temperature": 2.006873571847285,
+  "ece_before": 0.09496263298452139,
+  "ece_after": 0.04255089206585783,
+  "n_bins": 10,
+  "bins_before": [
+    {
+      "lo": 0.0,
+      "hi": 0.1,
+      "count": 0,
+      "accuracy": null,
+      "confidence": null
+    },
+    {
+      "lo": 0.1,
+      "hi": 0.2,
+      "count": 0,
+      "accuracy": null,
+      "confidence": null
+    },
+    {
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "count": 84,
+      "accuracy": 0.20238095238095238,
+      "confidence": 0.28703392584125254
+    },
+    {
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "count": 1147,
+      "accuracy": 0.3365300784655623,
+      "confidence": 0.35983896991966957
+    },
+    {
+      "lo": 0.4,
+      "hi": 0.5,
+      "count": 1669,
+      "accuracy": 0.39125224685440385,
+      "confidence": 0.44968904322067016
+    },
+    {
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "count": 1205,
+      "accuracy": 0.46721991701244814,
+      "confidence": 0.5465514366514003
+    },
+    {
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "count": 810,
+      "accuracy": 0.5061728395061729,
+      "confidence": 0.6450976943166854
+    },
+    {
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "count": 547,
+      "accuracy": 0.5045703839122486,
+      "confidence": 0.7440602390362208
+    },
+    {
+      "lo": 0.8,
+      "hi": 0.9,
+      "count": 215,
+      "accuracy": 0.6372093023255814,
+      "confidence": 0.8402648974112066
+    },
+    {
+      "lo": 0.9,
+      "hi": 1.0,
+      "count": 80,
+      "accuracy": 0.5375,
+      "confidence": 0.9442649928798772
+    }
+  ],
+  "bins_after": [
+    {
+      "lo": 0.0,
+      "hi": 0.1,
+      "count": 0,
+      "accuracy": null,
+      "confidence": null
+    },
+    {
+      "lo": 0.1,
+      "hi": 0.2,
+      "count": 0,
+      "accuracy": null,
+      "confidence": null
+    },
+    {
+      "lo": 0.2,
+      "hi": 0.30000000000000004,
+      "count": 478,
+      "accuracy": 0.32426778242677823,
+      "confidence": 0.28594795290444563
+    },
+    {
+      "lo": 0.30000000000000004,
+      "hi": 0.4,
+      "count": 2985,
+      "accuracy": 0.39095477386934674,
+      "confidence": 0.34925575818085786
+    },
+    {
+      "lo": 0.4,
+      "hi": 0.5,
+      "count": 1579,
+      "accuracy": 0.4882837238758708,
+      "confidence": 0.44202383622333546
+    },
+    {
+      "lo": 0.5,
+      "hi": 0.6000000000000001,
+      "count": 540,
+      "accuracy": 0.5481481481481482,
+      "confidence": 0.5384658871019439
+    },
+    {
+      "lo": 0.6000000000000001,
+      "hi": 0.7000000000000001,
+      "count": 119,
+      "accuracy": 0.5630252100840336,
+      "confidence": 0.6365447004008701
+    },
+    {
+      "lo": 0.7000000000000001,
+      "hi": 0.8,
+      "count": 32,
+      "accuracy": 0.46875,
+      "confidence": 0.734673417629327
+    },
+    {
+      "lo": 0.8,
+      "hi": 0.9,
+      "count": 19,
+      "accuracy": 0.631578947368421,
+      "confidence": 0.8418068274836369
+    },
+    {
+      "lo": 0.9,
+      "hi": 1.0,
+      "count": 5,
+      "accuracy": 0.4,
+      "confidence": 0.9303126557988965
+    }
+  ],
+  "figure": "reports/figures/calibration_E01.png"
+}
