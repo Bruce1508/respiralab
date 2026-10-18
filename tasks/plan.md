@@ -35,6 +35,6 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 
 ## Phase: Launch (D41–D42)
 - [x] **D41** — Honest technical report, citations, figure captions. `reports/final_report.md`. (commit `de8eb4c`)
-- [ ] **D42** — Fresh-clone walkthrough, demo, publish v1.0. Acceptance: **Gate G6**.
+- [x] **D42** — Fresh-clone walkthrough, demo, publish v1.0. Acceptance: **Gate G6**. (commit `4660fc0`, GATE G6: PASS - genuinely re-cloned and re-verified, not assumed)
 
-> **STOP — Gate G6 + explicit user go-ahead required before anything is published/pushed.**
+> **D01-D42 ALL COMPLETE. All 6 gates (G1-G6) PASS.** Repo is NOT pushed to origin and NOT git-tagged — publishing is a separate, explicit decision left to the user per the standing "don't push without asking" boundary.
