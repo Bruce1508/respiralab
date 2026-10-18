@@ -20,7 +20,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D30** — Official-split comparative experiment, separate protocol. Deliverable: `reports/official_protocol_comparison.md`. (committed)
 - [x] **D31** — Fixed-noise/SNR robustness checks, no model changes. Deliverable: `reports/robustness.md`. (committed)
 - [x] **D32** — Minority-class failure inspection by device/site/error type. Deliverable: `reports/error_analysis.md`. (committed)
-- [ ] **D33** — Single-factor ablation on dev data only. Deliverable: `reports/ablation.md`.
+- [x] **D33** — Single-factor ablation on dev data only. Deliverable: `reports/ablation.md`. (committed)
 - [ ] **D34** — Model card + clinical/recording caveats. Deliverable: `reports/model_card.md`. Acceptance: **Gate G5** — no diagnosis claims, limitations explicit.
 
 > **STOP — Gate G5 human sign-off required before Product phase.**
