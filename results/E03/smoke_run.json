@@ -1,0 +1,18 @@
+{
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "n_cycles": 16,
+  "label_counts": {
+    "both": 4,
+    "crackle": 4,
+    "normal": 4,
+    "wheeze": 4
+  },
+  "config": {
+    "n_steps": 100,
+    "lr": 0.01,
+    "seed": 42
+  },
+  "loss_first": 1.411987066268921,
+  "loss_last": 0.028735827654600143,
+  "checkpoint_path": "results/E03/smoke_checkpoint.pt"
+}
