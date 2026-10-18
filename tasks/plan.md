@@ -27,8 +27,8 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 
 ## Phase: Product (D35–D40)
 - [x] **D35** — Validated offline predictor + WAV input guards. `inference/predict.py`. (commit `7d2011f`)
-- [ ] **D36** — Streamlit upload + waveform + spectrogram UI. `app/streamlit_app.py`.
-- [ ] **D37** — Probabilities, method label, provenance in UI.
+- [x] **D36** — Streamlit upload + waveform + spectrogram UI. `app/streamlit_app.py`. (commit `5ad0e02`)
+- [x] **D37** — Probabilities, method label, provenance in UI. (commit `5ad0e02`; screenshot sub-deliverable not produced - no browser access this session)
 - [ ] **D38** — Synthetic integration fixtures + E2E UI smoke. `tests/integration/`.
 - [ ] **D39** — CI lint/test/import checks + sensitive-data scan. `ci.yml`.
 - [ ] **D40** — Inference latency/memory benchmark + packaged release. `reports/performance.md`.
