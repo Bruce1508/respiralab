@@ -1,0 +1,86 @@
+{
+  "protocol": "primary (patient-disjoint), ONE-TIME final test evaluation per Gate G4 freeze",
+  "frozen_at_commit": "cdc0b4f",
+  "evaluated_at_commit": "7d4cbb862734932827b0f79ade04f728f148616a",
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "patient_counts": {
+    "train": 84,
+    "val": 21,
+    "test": 21
+  },
+  "n_cycles": {
+    "train": 4649,
+    "test": 1141
+  },
+  "model": "logistic_regression (E01, frozen per reports/model_freeze.md)",
+  "macro_f1_test": 0.28609340673624606,
+  "per_class_test": {
+    "normal": {
+      "precision": 0.6846652267818575,
+      "recall": 0.4366391184573003,
+      "f1": 0.5332211942809083,
+      "support": 726
+    },
+    "crackle": {
+      "precision": 0.257372654155496,
+      "recall": 0.4067796610169492,
+      "f1": 0.31527093596059114,
+      "support": 236
+    },
+    "wheeze": {
+      "precision": 0.0738255033557047,
+      "recall": 0.10377358490566038,
+      "f1": 0.08627450980392157,
+      "support": 106
+    },
+    "both": {
+      "precision": 0.15384615384615385,
+      "recall": 0.3287671232876712,
+      "f1": 0.2096069868995633,
+      "support": 73
+    }
+  },
+  "confusion_matrix_test": {
+    "labels": [
+      "normal",
+      "crackle",
+      "wheeze",
+      "both"
+    ],
+    "matrix": [
+      [
+        317,
+        248,
+        105,
+        56
+      ],
+      [
+        95,
+        96,
+        13,
+        32
+      ],
+      [
+        42,
+        9,
+        11,
+        44
+      ],
+      [
+        9,
+        20,
+        20,
+        24
+      ]
+    ]
+  },
+  "icbhi_score_test": {
+    "specificity": 0.4366391184573003,
+    "sensitivity": 0.3156626506024096,
+    "score": 0.37615088452985496,
+    "n_true_normal": 726,
+    "n_true_abnormal": 415,
+    "correct_normal": 317,
+    "correct_abnormal": 131
+  }
+}
