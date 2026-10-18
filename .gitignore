@@ -3,7 +3,9 @@ data/raw/
 data/interim/
 data/processed/
 artifacts/
-reports/figures/*.png
+# reports/figures/*.png is intentionally tracked: EDA/report plots are small,
+# non-sensitive (class/device/duration distributions, no raw audio) and are
+# the recruiter-facing evidence docs/06_RELEASE_AND_PORTFOLIO.md asks for.
 
 # Python
 .venv/
