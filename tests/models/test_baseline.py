@@ -4,7 +4,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from respiralab.models.baseline import evaluate_dummy, load_split_features, patient_counts
+from respiralab.models.baseline import (
+    evaluate_dummy,
+    load_split_features,
+    load_split_patient_ids,
+    patient_counts,
+)
 
 
 def _write_cache(cache_dir, cycle_id: str, vec: np.ndarray) -> str:
@@ -94,3 +99,17 @@ def test_patient_counts_counts_unique_patients_per_split(tmp_path):
     assert counts["train"] == 4
     assert counts["val"] == 3
     assert counts["test"] == 0
+
+
+def test_load_split_patient_ids_aligns_with_load_split_features(tmp_path):
+    manifest_df = _manifest(tmp_path)
+    _, y_val = load_split_features(manifest_df, "val", tmp_path)
+    patient_ids = load_split_patient_ids(manifest_df, "val")
+    assert list(patient_ids) == ["v0", "v1", "v2"]
+    assert len(patient_ids) == len(y_val)
+
+
+def test_load_split_patient_ids_raises_on_missing_split(tmp_path):
+    manifest_df = _manifest(tmp_path)
+    with pytest.raises(ValueError, match="test"):
+        load_split_patient_ids(manifest_df, "test")

@@ -27,6 +27,13 @@ def load_split_features(
     return (X, y)
 
 
+def load_split_patient_ids(manifest_df: pd.DataFrame, split: str) -> np.ndarray:
+    rows = manifest_df[manifest_df["split"] == split]
+    if rows.empty:
+        raise ValueError(f"no feature_manifest rows for split={split!r}")
+    return rows["patient_id"].to_numpy()
+
+
 def evaluate_dummy(
     name: str,
     strategy: str,
