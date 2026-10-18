@@ -26,7 +26,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 > Gate G5 PASS logged in PROGRESS_LOG.md. Proceeding to Product phase per user's standing authorization to continue without a live pause at each gate.
 
 ## Phase: Product (D35–D40)
-- [ ] **D35** — Validated offline predictor + WAV input guards. `inference/predict.py`.
+- [x] **D35** — Validated offline predictor + WAV input guards. `inference/predict.py`. (commit `7d2011f`)
 - [ ] **D36** — Streamlit upload + waveform + spectrogram UI. `app/streamlit_app.py`.
 - [ ] **D37** — Probabilities, method label, provenance in UI.
 - [ ] **D38** — Synthetic integration fixtures + E2E UI smoke. `tests/integration/`.
