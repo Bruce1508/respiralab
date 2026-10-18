@@ -9,7 +9,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D23** — Train minimal compact CNN over log-Mel, fixed config. Deliverable: `cnn.py`, `results/E03`. Acceptance: loss decreases on tiny overfit smoke batch; checkpoint saved. (commits `425236d`, `a1ce5bf`)
 - [x] **D24** — Validation logging, early stopping, checkpoints, resume. Deliverable: `training.py`, `train_cnn.yaml`. Acceptance: run can resume; best chosen by validation only. (commits `35c52fa`, `d09584c`)
 - [x] **D25** — Training-only augmentations; test inherited patient IDs. Deliverable: `augment.py`, tests. Acceptance: no augmented child assigned to val/test. (commit `03a1712`)
-- [ ] **D26** — Controlled CNN training over 3 seeds; capture compute cost. Deliverable: `results/E03_seed_runs`. Acceptance: each run records config/commit/hardware/runtime.
+- [x] **D26** — Controlled CNN training over 3 seeds; capture compute cost. Deliverable: `results/E03_seed_runs`. Acceptance: each run records config/commit/hardware/runtime. (commit `cc09a05`)
 - [ ] **D27** — Compare CNN vs best classical ML, identical validation protocol. Deliverable: `reports/model_comparison.md`. Acceptance: same test-free dev set; minority recall reported.
 - [ ] **D28** — Freeze model selection, write pre-test protocol declaration. Deliverable: `reports/model_freeze.md`. Acceptance: **Gate G4** — config/threshold/metrics/hashes frozen.
 
