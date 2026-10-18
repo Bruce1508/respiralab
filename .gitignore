@@ -2,7 +2,12 @@
 data/raw/
 data/interim/
 data/processed/
-artifacts/
+artifacts/*
+# artifacts/features_cache/ is intentionally tracked: extracted numeric
+# features (log-mel stats etc.), not raw audio — needed by the Streamlit
+# Cloud deploy to refit the frozen model (reports/model_freeze.md) without
+# the real ICBHI dataset present.
+!artifacts/features_cache/
 # reports/figures/*.png is intentionally tracked: EDA/report plots are small,
 # non-sensitive (class/device/duration distributions, no raw audio) and are
 # the recruiter-facing evidence docs/06_RELEASE_AND_PORTFOLIO.md asks for.
