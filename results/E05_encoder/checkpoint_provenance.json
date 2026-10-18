@@ -1,0 +1,7 @@
+{
+  "checkpoint": "MIT/ast-finetuned-audioset-10-10-0.4593",
+  "license": "BSD-3-Clause",
+  "sample_rate": 16000,
+  "embedding_dim": 768,
+  "weights_sha256": "ae0c1e2ad4e1381d851fa9bf298ba13ebc9c5a914cdee2dbe427a6583869924d"
+}

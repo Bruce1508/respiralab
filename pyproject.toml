@@ -12,6 +12,7 @@ dependencies = [
     "librosa>=0.10",
     "scikit-learn>=1.4",
     "torch>=2.2",
+    "transformers>=4.40",
     "streamlit>=1.32",
     "pandas>=2.2",
     "matplotlib>=3.8",
