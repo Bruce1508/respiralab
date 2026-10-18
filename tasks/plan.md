@@ -10,10 +10,10 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D24** — Validation logging, early stopping, checkpoints, resume. Deliverable: `training.py`, `train_cnn.yaml`. Acceptance: run can resume; best chosen by validation only. (commits `35c52fa`, `d09584c`)
 - [x] **D25** — Training-only augmentations; test inherited patient IDs. Deliverable: `augment.py`, tests. Acceptance: no augmented child assigned to val/test. (commit `03a1712`)
 - [x] **D26** — Controlled CNN training over 3 seeds; capture compute cost. Deliverable: `results/E03_seed_runs`. Acceptance: each run records config/commit/hardware/runtime. (commit `cc09a05`)
-- [ ] **D27** — Compare CNN vs best classical ML, identical validation protocol. Deliverable: `reports/model_comparison.md`. Acceptance: same test-free dev set; minority recall reported.
-- [ ] **D28** — Freeze model selection, write pre-test protocol declaration. Deliverable: `reports/model_freeze.md`. Acceptance: **Gate G4** — config/threshold/metrics/hashes frozen.
+- [x] **D27** — Compare CNN vs best classical ML, identical validation protocol. Deliverable: `reports/model_comparison.md`. Acceptance: same test-free dev set; minority recall reported. (committed)
+- [x] **D28** — Freeze model selection, write pre-test protocol declaration. Deliverable: `reports/model_freeze.md`. Acceptance: **Gate G4** — config/threshold/metrics/hashes frozen. (commit `5406c76`, GATE G4: PASS)
 
-> **STOP — Gate G4 human sign-off required before D29.** `planning/QUALITY_GATES.md`: "DO NOT open final test" until a human logs G4 PASS in `PROGRESS_LOG.md`. Do not proceed to D29 on D28's commit alone.
+> Gate G4 PASS logged in PROGRESS_LOG.md (2026-10-18), all 5 go/no-go questions answered with citations. User authorized continuing without a live pause at each remaining gate, provided criteria are genuinely met. Proceeding to D29.
 
 ## Phase: Validation (D29–D34)
 - [ ] **D29** — Run FINAL untouched primary test evaluation, report once. Deliverable: `reports/final_test_results.json`. Acceptance: no subsequent test-driven tuning; class counts included. **Irreversible — test is opened exactly once here.**
