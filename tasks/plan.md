@@ -21,9 +21,9 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D31** — Fixed-noise/SNR robustness checks, no model changes. Deliverable: `reports/robustness.md`. (committed)
 - [x] **D32** — Minority-class failure inspection by device/site/error type. Deliverable: `reports/error_analysis.md`. (committed)
 - [x] **D33** — Single-factor ablation on dev data only. Deliverable: `reports/ablation.md`. (committed)
-- [ ] **D34** — Model card + clinical/recording caveats. Deliverable: `reports/model_card.md`. Acceptance: **Gate G5** — no diagnosis claims, limitations explicit.
+- [x] **D34** — Model card + clinical/recording caveats. Deliverable: `reports/model_card.md`. Acceptance: **Gate G5** — no diagnosis claims, limitations explicit. (commit `d526971`, GATE G5: PASS)
 
-> **STOP — Gate G5 human sign-off required before Product phase.**
+> Gate G5 PASS logged in PROGRESS_LOG.md. Proceeding to Product phase per user's standing authorization to continue without a live pause at each gate.
 
 ## Phase: Product (D35–D40)
 - [ ] **D35** — Validated offline predictor + WAV input guards. `inference/predict.py`.
