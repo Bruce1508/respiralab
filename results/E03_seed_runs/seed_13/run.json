@@ -1,0 +1,66 @@
+{
+  "seed": 13,
+  "config": {
+    "lr": 0.001,
+    "batch_size": 32,
+    "max_epochs": 6,
+    "patience": 2
+  },
+  "commit": "5aaedddd1451f10cd5ba853087ae2a7cb8caa73a",
+  "hardware": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python_version": "3.11.15",
+    "torch_version": "2.14.1",
+    "torch_num_threads": 10
+  },
+  "runtime_s": 412.9739558696747,
+  "n_epochs_run": 6,
+  "stopped_early": false,
+  "best_val_macro_f1": 0.3156640322707399,
+  "history": [
+    {
+      "epoch": 0,
+      "train_loss": 1.1622121921532331,
+      "val_loss": 1.1252956244058987,
+      "val_macro_f1": 0.28507967203889883,
+      "improved": true
+    },
+    {
+      "epoch": 1,
+      "train_loss": 1.127357085652699,
+      "val_loss": 1.0498438143988378,
+      "val_macro_f1": 0.2040788092062321,
+      "improved": false
+    },
+    {
+      "epoch": 2,
+      "train_loss": 1.112031726920238,
+      "val_loss": 1.0376233835082622,
+      "val_macro_f1": 0.2925669580416953,
+      "improved": true
+    },
+    {
+      "epoch": 3,
+      "train_loss": 1.0866721315418784,
+      "val_loss": 1.0667305633909865,
+      "val_macro_f1": 0.29010151257330774,
+      "improved": false
+    },
+    {
+      "epoch": 4,
+      "train_loss": 1.0739782247576157,
+      "val_loss": 1.070604086782958,
+      "val_macro_f1": 0.3156640322707399,
+      "improved": true
+    },
+    {
+      "epoch": 5,
+      "train_loss": 1.0637234641444584,
+      "val_loss": 1.045525242920817,
+      "val_macro_f1": 0.2706939975312096,
+      "improved": false
+    }
+  ],
+  "checkpoint_path": "results/E03_seed_runs/seed_13/checkpoint.pt"
+}

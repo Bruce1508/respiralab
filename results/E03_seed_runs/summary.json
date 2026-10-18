@@ -1,0 +1,79 @@
+{
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "commit": "5aaedddd1451f10cd5ba853087ae2a7cb8caa73a",
+  "hardware": {
+    "platform": "macOS-26.6.2-arm64-arm-64bit",
+    "processor": "arm",
+    "python_version": "3.11.15",
+    "torch_version": "2.14.1",
+    "torch_num_threads": 10
+  },
+  "runs": [
+    {
+      "seed": 13,
+      "config": {
+        "lr": 0.001,
+        "batch_size": 32,
+        "max_epochs": 6,
+        "patience": 2
+      },
+      "commit": "5aaedddd1451f10cd5ba853087ae2a7cb8caa73a",
+      "hardware": {
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "processor": "arm",
+        "python_version": "3.11.15",
+        "torch_version": "2.14.1",
+        "torch_num_threads": 10
+      },
+      "runtime_s": 412.9739558696747,
+      "n_epochs_run": 6,
+      "stopped_early": false,
+      "best_val_macro_f1": 0.3156640322707399,
+      "checkpoint_path": "results/E03_seed_runs/seed_13/checkpoint.pt"
+    },
+    {
+      "seed": 21,
+      "config": {
+        "lr": 0.001,
+        "batch_size": 32,
+        "max_epochs": 6,
+        "patience": 2
+      },
+      "commit": "5aaedddd1451f10cd5ba853087ae2a7cb8caa73a",
+      "hardware": {
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "processor": "arm",
+        "python_version": "3.11.15",
+        "torch_version": "2.14.1",
+        "torch_num_threads": 10
+      },
+      "runtime_s": 209.1406500339508,
+      "n_epochs_run": 3,
+      "stopped_early": true,
+      "best_val_macro_f1": 0.31192417048976345,
+      "checkpoint_path": "results/E03_seed_runs/seed_21/checkpoint.pt"
+    },
+    {
+      "seed": 42,
+      "config": {
+        "lr": 0.001,
+        "batch_size": 32,
+        "max_epochs": 6,
+        "patience": 2
+      },
+      "commit": "5aaedddd1451f10cd5ba853087ae2a7cb8caa73a",
+      "hardware": {
+        "platform": "macOS-26.6.2-arm64-arm-64bit",
+        "processor": "arm",
+        "python_version": "3.11.15",
+        "torch_version": "2.14.1",
+        "torch_num_threads": 10
+      },
+      "runtime_s": 334.2974798679352,
+      "n_epochs_run": 5,
+      "stopped_early": true,
+      "best_val_macro_f1": 0.30331585384417536,
+      "checkpoint_path": "results/E03_seed_runs/seed_42/checkpoint.pt"
+    }
+  ]
+}
