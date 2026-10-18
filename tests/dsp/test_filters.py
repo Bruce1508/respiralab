@@ -1,8 +1,3 @@
-"""D11 tests (RED first): optional high/low/bandpass filters — correct
-passband behavior, sample-rate-aware cutoff validation, invalid cutoffs
-rejected rather than silently clamped.
-"""
-
 import numpy as np
 import pytest
 
@@ -51,11 +46,9 @@ def test_bandpass_keeps_only_the_band():
     in_band = _tone(500.0, 2.0, sr)
     below_band = _tone(50.0, 2.0, sr)
     above_band = _tone(1800.0, 2.0, sr)
-
     out_in = bandpass_filter(in_band, sr, low_hz=200.0, high_hz=800.0)
     out_below = bandpass_filter(below_band, sr, low_hz=200.0, high_hz=800.0)
     out_above = bandpass_filter(above_band, sr, low_hz=200.0, high_hz=800.0)
-
     assert _energy(out_in) > _energy(in_band) * 0.5
     assert _energy(out_below) < _energy(below_band) * 0.1
     assert _energy(out_above) < _energy(above_band) * 0.1
@@ -63,7 +56,7 @@ def test_bandpass_keeps_only_the_band():
 
 @pytest.mark.parametrize("cutoff_hz", [0, -100.0, 2000.0, 2500.0])
 def test_lowpass_rejects_cutoff_at_or_beyond_nyquist(cutoff_hz: float):
-    sr = 4000  # nyquist = 2000
+    sr = 4000
     audio = np.zeros(sr, dtype=np.float32)
     with pytest.raises(FilterError):
         lowpass_filter(audio, sr, cutoff_hz=cutoff_hz)

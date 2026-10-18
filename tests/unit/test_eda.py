@@ -1,5 +1,3 @@
-"""D05 unit tests: discrepancy detection against official totals, report + figure generation."""
-
 from pathlib import Path
 
 import pandas as pd
@@ -20,7 +18,7 @@ def test_no_discrepancy_when_counts_match_official_totals():
 def test_flags_mismatched_patient_count():
     discrepancies = compute_discrepancies(
         n_recordings=920,
-        n_patients=125,  # one short
+        n_patients=125,
         n_cycles=6898,
         label_counts={"normal": 3642, "crackle": 1864, "wheeze": 886, "both": 506},
     )
@@ -35,7 +33,7 @@ def test_flags_mismatched_label_count():
         n_recordings=920,
         n_patients=126,
         n_cycles=6898,
-        label_counts={"normal": 3642, "crackle": 1800, "wheeze": 886, "both": 506},  # crackle off
+        label_counts={"normal": 3642, "crackle": 1800, "wheeze": 886, "both": 506},
     )
     dims = {d.dimension for d in discrepancies}
     assert "label:crackle" in dims
@@ -53,14 +51,11 @@ def test_build_report_writes_four_figures_and_no_discrepancy_text(tmp_path: Path
     )
     cycles_df = pd.DataFrame({"label4": ["normal", "crackle", "normal"]})
     figures_dir = tmp_path / "figures"
-
     report, discrepancies = build_report(inventory_df, cycles_df, figures_dir)
-
     assert (figures_dir / "labels.png").exists()
     assert (figures_dir / "devices.png").exists()
     assert (figures_dir / "chest_sites.png").exists()
     assert (figures_dir / "durations.png").exists()
     assert "## Cycle label distribution" in report
-    assert "2 unique patient IDs" in report  # 101 appears twice, 102 once -> 2 unique
-    # real mismatch expected here since this is tiny synthetic data, not the real dataset
+    assert "2 unique patient IDs" in report
     assert len(discrepancies) > 0

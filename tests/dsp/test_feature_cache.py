@@ -1,8 +1,3 @@
-"""D13 tests (RED first): feature cache with hashes/lineage — identical
-inputs produce identical feature hashes, feature computation never depends
-on split label (no cross-split information mixing), cache round-trips.
-"""
-
 from pathlib import Path
 
 import numpy as np
@@ -57,28 +52,53 @@ def test_cache_one_cycle_writes_npy_and_returns_row(tmp_path: Path):
 def test_identical_audio_produces_identical_feature_hash(tmp_path: Path):
     audio = _tone(300.0, 2.0, 4000)
     row1 = cache_one_cycle(
-        audio=audio, sample_rate=4000, cycle_id="c1", record_id="r1", patient_id="p1",
-        split="train", label4="normal", input_sha256="abc", cache_dir=tmp_path / "a",
+        audio=audio,
+        sample_rate=4000,
+        cycle_id="c1",
+        record_id="r1",
+        patient_id="p1",
+        split="train",
+        label4="normal",
+        input_sha256="abc",
+        cache_dir=tmp_path / "a",
     )
     row2 = cache_one_cycle(
-        audio=audio.copy(), sample_rate=4000, cycle_id="c2", record_id="r1", patient_id="p1",
-        split="train", label4="normal", input_sha256="abc", cache_dir=tmp_path / "b",
+        audio=audio.copy(),
+        sample_rate=4000,
+        cycle_id="c2",
+        record_id="r1",
+        patient_id="p1",
+        split="train",
+        label4="normal",
+        input_sha256="abc",
+        cache_dir=tmp_path / "b",
     )
     assert row1.feature_hash == row2.feature_hash
 
 
 def test_feature_hash_is_independent_of_split_label_no_mixing(tmp_path: Path):
-    """The same cycle's features must not change depending on which split it's
-    assigned to — split membership is pure bookkeeping, never an input to
-    feature computation (that would be a leakage vector)."""
     audio = _tone(500.0, 2.0, 4000)
     row_train = cache_one_cycle(
-        audio=audio, sample_rate=4000, cycle_id="c1", record_id="r1", patient_id="p1",
-        split="train", label4="wheeze", input_sha256="xyz", cache_dir=tmp_path / "t",
+        audio=audio,
+        sample_rate=4000,
+        cycle_id="c1",
+        record_id="r1",
+        patient_id="p1",
+        split="train",
+        label4="wheeze",
+        input_sha256="xyz",
+        cache_dir=tmp_path / "t",
     )
     row_test = cache_one_cycle(
-        audio=audio.copy(), sample_rate=4000, cycle_id="c1", record_id="r1", patient_id="p1",
-        split="test", label4="wheeze", input_sha256="xyz", cache_dir=tmp_path / "v",
+        audio=audio.copy(),
+        sample_rate=4000,
+        cycle_id="c1",
+        record_id="r1",
+        patient_id="p1",
+        split="test",
+        label4="wheeze",
+        input_sha256="xyz",
+        cache_dir=tmp_path / "v",
     )
     assert row_train.feature_hash == row_test.feature_hash
 
@@ -86,19 +106,32 @@ def test_feature_hash_is_independent_of_split_label_no_mixing(tmp_path: Path):
 def test_write_manifest_has_expected_columns(tmp_path: Path):
     audio = _tone(300.0, 1.0, 4000)
     row = cache_one_cycle(
-        audio=audio, sample_rate=4000, cycle_id="c1", record_id="r1", patient_id="p1",
-        split="val", label4="both", input_sha256="hash123", cache_dir=tmp_path,
+        audio=audio,
+        sample_rate=4000,
+        cycle_id="c1",
+        record_id="r1",
+        patient_id="p1",
+        split="val",
+        label4="both",
+        input_sha256="hash123",
+        cache_dir=tmp_path,
     )
     out = tmp_path / "feature_manifest.csv"
     write_manifest([row], out)
-
     import csv
 
     with out.open() as f:
         reader = csv.DictReader(f)
         assert reader.fieldnames == [
-            "cycle_id", "record_id", "patient_id", "split", "label4",
-            "input_sha256", "preprocess_config_hash", "feature_hash", "cache_path",
+            "cycle_id",
+            "record_id",
+            "patient_id",
+            "split",
+            "label4",
+            "input_sha256",
+            "preprocess_config_hash",
+            "feature_hash",
+            "cache_path",
         ]
         rows = list(reader)
     assert len(rows) == 1

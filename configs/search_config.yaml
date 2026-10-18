@@ -1,7 +1,3 @@
-# D17 (E02): bounded, predeclared RBF SVM hyperparameter grid.
-# Fixed BEFORE running — selection happens on the val split only
-# (docs/04_EXPERIMENTS.md: "bounded predeclared search on validation
-# (SVM C/gamma) ... don't run a giant search without promising evidence").
 model: svm_rbf
 seed: 42
 param_grid:

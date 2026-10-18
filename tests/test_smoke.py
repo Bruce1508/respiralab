@@ -1,5 +1,3 @@
-"""D01 import/CLI smoke test: package imports, CLI entry point runs, version is exposed."""
-
 import subprocess
 import sys
 

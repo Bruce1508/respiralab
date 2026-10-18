@@ -1,7 +1,3 @@
-"""D12 tests (RED first): handcrafted feature extraction — fixed shape,
-finite output (silence/short-audio edge cases), deterministic, fit-free.
-"""
-
 import json
 from pathlib import Path
 
@@ -44,7 +40,7 @@ def test_feature_vector_is_finite_for_silence():
 
 def test_feature_vector_is_finite_for_very_short_audio():
     sr = 4000
-    audio = _tone(300.0, 0.05, sr)  # 50ms
+    audio = _tone(300.0, 0.05, sr)
     vec = extract_features(audio, sr)
     assert np.isfinite(vec).all()
     assert len(vec) == len(FEATURE_NAMES)

@@ -1,10 +1,3 @@
-"""D05: EDA over D03's dataset_inventory.csv and D04's cycles.csv — class,
-device, chest-site, and duration distributions — writing reports/data_audit.md
-and bar/histogram plots to reports/figures/. Counts are cross-checked against
-the official ICBHI totals (docs/03_DATA_AND_EVALUATION_CONTRACT.md); any
-mismatch is enumerated in the report, never silently absorbed.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -28,12 +21,8 @@ class Discrepancy:
 
 
 def compute_discrepancies(
-    n_recordings: int,
-    n_patients: int,
-    n_cycles: int,
-    label_counts: dict[str, int],
+    n_recordings: int, n_patients: int, n_cycles: int, label_counts: dict[str, int]
 ) -> list[Discrepancy]:
-    """Compare actual counts to the official totals; return every mismatch found."""
     discrepancies: list[Discrepancy] = []
     checks = [
         ("recordings", EXPECTED_RECORDINGS, n_recordings),
@@ -51,7 +40,7 @@ def compute_discrepancies(
 def _bar_plot(counts: Counter, title: str, xlabel: str, out_path: Path) -> None:
     import matplotlib
 
-    matplotlib.use("Agg")  # headless: never requires a display
+    matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
     items = sorted(counts.items(), key=lambda kv: kv[0])
@@ -84,11 +73,8 @@ def _histogram(values: pd.Series, title: str, xlabel: str, out_path: Path) -> No
 
 
 def build_report(
-    inventory_df: pd.DataFrame,
-    cycles_df: pd.DataFrame,
-    figures_dir: Path,
+    inventory_df: pd.DataFrame, cycles_df: pd.DataFrame, figures_dir: Path
 ) -> tuple[str, list[Discrepancy]]:
-    """Compute all summary stats, write the 4 plots, and return the markdown report text."""
     n_recordings = len(inventory_df)
     n_patients = inventory_df["patient_id"].nunique()
     n_cycles = len(cycles_df)
@@ -96,21 +82,23 @@ def build_report(
     device_counts = Counter(inventory_df["device"])
     chest_site_counts = Counter(inventory_df["chest_site"])
     sample_rate_counts = Counter(inventory_df["sample_rate"])
-
     discrepancies = compute_discrepancies(n_recordings, n_patients, n_cycles, dict(label_counts))
-
     _bar_plot(label_counts, "Cycle label distribution", "label4", figures_dir / "labels.png")
     _bar_plot(device_counts, "Recording device distribution", "device", figures_dir / "devices.png")
     _bar_plot(
         chest_site_counts, "Chest site distribution", "chest_site", figures_dir / "chest_sites.png"
     )
     _histogram(
-        inventory_df["duration_s"], "Recording duration distribution", "duration_s",
+        inventory_df["duration_s"],
+        "Recording duration distribution",
+        "duration_s",
         figures_dir / "durations.png",
     )
 
     def _table(counter: Counter) -> str:
-        return "\n".join(f"| {k} | {v} |" for k, v in sorted(counter.items(), key=lambda kv: str(kv[0])))
+        return "\n".join(
+            (f"| {k} | {v} |" for k, v in sorted(counter.items(), key=lambda kv: str(kv[0])))
+        )
 
     discrepancy_section = (
         "No discrepancies — all counts match the official ICBHI totals."
@@ -119,54 +107,9 @@ def build_report(
             f"- **{d.dimension}**: expected {d.expected}, got {d.actual}" for d in discrepancies
         )
     )
-
     duration = inventory_df["duration_s"]
-    report = f"""# Data audit report (D05)
-
-Generated from `manifests/dataset_inventory.csv` ({n_recordings} recordings) and
-`manifests/cycles.csv` ({n_cycles} cycles).
-
-## Cross-check against official totals
-{discrepancy_section}
-
-## Cycle label distribution (4-class)
-| label4 | count |
-|---|---|
-{_table(label_counts)}
-
-## Device distribution (recording-level)
-| device | count |
-|---|---|
-{_table(device_counts)}
-
-## Chest site distribution (recording-level)
-| chest_site | count |
-|---|---|
-{_table(chest_site_counts)}
-
-## Sample rate distribution (recording-level)
-| sample_rate | count |
-|---|---|
-{_table(sample_rate_counts)}
-
-## Duration statistics (seconds, recording-level)
-| stat | value |
-|---|---|
-| min | {duration.min():.2f} |
-| max | {duration.max():.2f} |
-| mean | {duration.mean():.2f} |
-| median | {duration.median():.2f} |
-
-## Figures
-![label distribution](figures/labels.png)
-![device distribution](figures/devices.png)
-![chest site distribution](figures/chest_sites.png)
-![duration distribution](figures/durations.png)
-
-## Unique patients
-{n_patients} unique patient IDs.
-"""
-    return report, discrepancies
+    report = f"# Data audit report (D05)\n\nGenerated from `manifests/dataset_inventory.csv` ({n_recordings} recordings) and\n`manifests/cycles.csv` ({n_cycles} cycles).\n\n## Cross-check against official totals\n{discrepancy_section}\n\n## Cycle label distribution (4-class)\n| label4 | count |\n|---|---|\n{_table(label_counts)}\n\n## Device distribution (recording-level)\n| device | count |\n|---|---|\n{_table(device_counts)}\n\n## Chest site distribution (recording-level)\n| chest_site | count |\n|---|---|\n{_table(chest_site_counts)}\n\n## Sample rate distribution (recording-level)\n| sample_rate | count |\n|---|---|\n{_table(sample_rate_counts)}\n\n## Duration statistics (seconds, recording-level)\n| stat | value |\n|---|---|\n| min | {duration.min():.2f} |\n| max | {duration.max():.2f} |\n| mean | {duration.mean():.2f} |\n| median | {duration.median():.2f} |\n\n## Figures\n![label distribution](figures/labels.png)\n![device distribution](figures/devices.png)\n![chest site distribution](figures/chest_sites.png)\n![duration distribution](figures/durations.png)\n\n## Unique patients\n{n_patients} unique patient IDs.\n"
+    return (report, discrepancies)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -176,14 +119,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--report-out", required=True, type=Path)
     parser.add_argument("--figures-dir", required=True, type=Path)
     args = parser.parse_args(argv)
-
     inventory_df = pd.read_csv(args.dataset_inventory)
     cycles_df = pd.read_csv(args.cycles)
-
     report, discrepancies = build_report(inventory_df, cycles_df, args.figures_dir)
     args.report_out.parent.mkdir(parents=True, exist_ok=True)
     args.report_out.write_text(report)
-
     print(f"wrote report: {args.report_out}")
     print(f"wrote 4 figures to: {args.figures_dir}")
     if discrepancies:

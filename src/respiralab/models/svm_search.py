@@ -1,12 +1,3 @@
-"""D17: bounded, predeclared RBF SVM hyperparameter search (E02).
-
-The grid (`configs/search_config.yaml`) is fixed BEFORE running — selection
-picks the trial with the best macro-F1 on the val split only, never test
-(docs/04_EXPERIMENTS.md: "bounded predeclared search on validation (SVM
-C/gamma)"). Every trial is recorded, not just the winner, so the search
-budget stays transparent (acceptance: "search budget recorded").
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -42,17 +33,11 @@ def build_svm_pipeline(C: float, gamma: str | float, seed: int) -> Pipeline:
 
 
 def run_search(
-    config: dict,
-    X_train: np.ndarray,
-    y_train: np.ndarray,
-    X_dev: np.ndarray,
-    y_dev: np.ndarray,
+    config: dict, X_train: np.ndarray, y_train: np.ndarray, X_dev: np.ndarray, y_dev: np.ndarray
 ) -> dict:
-    """Fit every (C, gamma) combo in `config["param_grid"]` on train, score on val only."""
     seed = config["seed"]
     c_values = config["param_grid"]["C"]
     gamma_values = config["param_grid"]["gamma"]
-
     trials = []
     for c_value, gamma_value in product(c_values, gamma_values):
         pipeline = build_svm_pipeline(C=c_value, gamma=gamma_value, seed=seed)
@@ -60,13 +45,8 @@ def run_search(
         y_pred = pipeline.predict(X_dev)
         scores = score_predictions(y_dev, y_pred)
         trials.append({"C": c_value, "gamma": gamma_value, **scores})
-
     best = max(trials, key=lambda t: t["macro_f1"])
-    return {
-        "n_trials": len(trials),
-        "trials": trials,
-        "best": {"strategy": "svm_rbf", **best},
-    }
+    return {"n_trials": len(trials), "trials": trials, "best": {"strategy": "svm_rbf", **best}}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -79,14 +59,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--search-config", required=True, type=Path)
     parser.add_argument("--out", required=True, type=Path)
     args = parser.parse_args(argv)
-
     manifest_df = pd.read_csv(args.feature_manifest)
     X_train, y_train = load_split_features(manifest_df, "train", args.cache_dir)
     X_dev, y_dev = load_split_features(manifest_df, "val", args.cache_dir)
-
     search_config = load_search_config(args.search_config)
     search_result = run_search(search_config, X_train, y_train, X_dev, y_dev)
-
     result = {
         "split_hash": sha256_of_file(args.splits_csv),
         "patient_counts": patient_counts(manifest_df),
@@ -94,7 +71,6 @@ def main(argv: list[str] | None = None) -> int:
         "search_config": search_config,
         **search_result,
     }
-
     args.out.mkdir(parents=True, exist_ok=True)
     out_path = args.out / "dev_scores.json"
     out_path.write_text(json.dumps(result, indent=2))

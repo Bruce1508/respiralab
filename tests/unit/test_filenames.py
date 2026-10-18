@@ -1,5 +1,3 @@
-"""D03 unit tests: ICBHI filename parsing — valid cases and every rejection path."""
-
 import pytest
 
 from respiralab.data.filenames import FilenameParseError, parse_icbhi_filename
@@ -16,12 +14,7 @@ def test_parses_real_example():
 
 
 @pytest.mark.parametrize(
-    "stem",
-    [
-        "103_2b2_Ar_mc_LittC2SE",
-        "104_1b1_Ll_sc_Litt3200",
-        "226_1p1_Tc_sc_AKGC417L",
-    ],
+    "stem", ["103_2b2_Ar_mc_LittC2SE", "104_1b1_Ll_sc_Litt3200", "226_1p1_Tc_sc_AKGC417L"]
 )
 def test_parses_all_documented_vocab_values(stem: str):
     parsed = parse_icbhi_filename(stem)
@@ -30,7 +23,7 @@ def test_parses_all_documented_vocab_values(stem: str):
 
 def test_rejects_wrong_part_count():
     with pytest.raises(FilenameParseError):
-        parse_icbhi_filename("101_1b1_Al_sc")  # missing device
+        parse_icbhi_filename("101_1b1_Al_sc")
 
 
 def test_rejects_unknown_chest_site():

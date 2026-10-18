@@ -1,5 +1,3 @@
-"""D04 unit tests: label map correctness, strict validation of malformed/out-of-bounds lines."""
-
 from pathlib import Path
 
 import pytest
@@ -30,9 +28,7 @@ def test_label_map_rejects_out_of_range_bits():
 def test_parses_real_shaped_file(tmp_path: Path):
     f = tmp_path / "101_1b1_Al_sc_Meditron.txt"
     f.write_text("0.036 0.579 0 0\n0.579 2.45 1 0\n2.45 3.893 0 1\n3.893 5.793 1 1\n")
-
     cycles = parse_annotation_file(f)
-
     assert len(cycles) == 4
     assert [c.label4 for c in cycles] == ["normal", "crackle", "wheeze", "both"]
     assert all(c.record_id == "101_1b1_Al_sc_Meditron" for c in cycles)
@@ -42,7 +38,7 @@ def test_parses_real_shaped_file(tmp_path: Path):
 
 def test_rejects_malformed_column_count(tmp_path: Path):
     f = tmp_path / "101_1b1_Al_sc_Meditron.txt"
-    f.write_text("0.0 1.0 0\n")  # missing 4th column
+    f.write_text("0.0 1.0 0\n")
     with pytest.raises(AnnotationParseError):
         parse_annotation_file(f)
 
@@ -100,10 +96,8 @@ def test_build_cycle_manifest_logs_rejection_without_raising(tmp_path: Path):
     good = tmp_path / "101_1b1_Al_sc_Meditron.txt"
     good.write_text("0.0 1.0 0 0\n")
     bad = tmp_path / "102_1b1_Ar_sc_Meditron.txt"
-    bad.write_text("2.0 1.0 0 0\n")  # start > end
-
+    bad.write_text("2.0 1.0 0 0\n")
     cycles, rejections = build_cycle_manifest(tmp_path)
-
     assert len(cycles) == 1
     assert len(rejections) == 1
     assert rejections[0].filename == "102_1b1_Ar_sc_Meditron.txt"
@@ -111,12 +105,10 @@ def test_build_cycle_manifest_logs_rejection_without_raising(tmp_path: Path):
 
 def test_build_cycle_manifest_enforces_duration_lookup(tmp_path: Path):
     f = tmp_path / "101_1b1_Al_sc_Meditron.txt"
-    f.write_text("0.0 10.0 0 0\n")  # exceeds the 4s duration below
-
+    f.write_text("0.0 10.0 0 0\n")
     cycles, rejections = build_cycle_manifest(
         tmp_path, duration_lookup={"101_1b1_Al_sc_Meditron": (4.0, 4000)}
     )
-
     assert cycles == []
     assert len(rejections) == 1
 
@@ -124,9 +116,7 @@ def test_build_cycle_manifest_enforces_duration_lookup(tmp_path: Path):
 def test_load_duration_lookup_reads_dataset_inventory_csv(tmp_path: Path):
     csv_path = tmp_path / "dataset_inventory.csv"
     csv_path.write_text(
-        "record_id,patient_id,recording_index,chest_site,mode,device,sample_rate,"
-        "channels,duration_s,size_bytes,sha256,source_filename\n"
-        "101_1b1_Al_sc_Meditron,101,1b1,Al,sc,Meditron,4000,1,20.5,100,abc,101_1b1_Al_sc_Meditron.wav\n"
+        "record_id,patient_id,recording_index,chest_site,mode,device,sample_rate,channels,duration_s,size_bytes,sha256,source_filename\n101_1b1_Al_sc_Meditron,101,1b1,Al,sc,Meditron,4000,1,20.5,100,abc,101_1b1_Al_sc_Meditron.wav\n"
     )
     lookup = load_duration_lookup(csv_path)
     assert lookup == {"101_1b1_Al_sc_Meditron": (20.5, 4000)}
@@ -138,7 +128,6 @@ def test_write_csv_matches_dataclass_fields(tmp_path: Path):
     cycles = parse_annotation_file(f)
     out = tmp_path / "cycles.csv"
     write_csv(cycles, out)
-
     import csv as csv_mod
 
     with out.open() as fh:

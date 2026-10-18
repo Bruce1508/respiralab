@@ -1,14 +1,3 @@
-"""D13: feature cache with hashes and lineage, plus runtime profiling.
-
-Caches each cycle's D12 feature vector to disk (.npy, keyed by cycle_id),
-recording input/feature hashes and preprocessing config in a manifest.
-Determinism contract: identical (audio, config) -> identical feature_hash,
-regardless of split label. Split membership is pure bookkeeping in the
-manifest — it is never passed into feature computation, so a cycle's
-features can never silently differ depending on which split it landed in
-(the no-cross-split-mixing property this task asks for).
-"""
-
 from __future__ import annotations
 
 import csv
@@ -21,9 +10,6 @@ import numpy as np
 
 from respiralab.dsp.features import extract_features
 
-# Exact preprocessing parameters used to build the cache. Changing any of
-# these must change preprocess_config_hash(), invalidating old cache entries
-# rather than silently mixing features built under different settings.
 PREPROCESS_CONFIG = {
     "target_sample_rate": 4000,
     "n_mfcc": 13,
@@ -65,12 +51,6 @@ def cache_one_cycle(
     input_sha256: str,
     cache_dir: Path,
 ) -> CacheRow:
-    """Extract features for one cycle, save to cache_dir/{cycle_id}.npy, return its manifest row.
-
-    Feature computation uses only `audio`/`sample_rate` — `split` is recorded
-    in the returned row purely as bookkeeping and never influences the
-    feature vector itself.
-    """
     vec = extract_features(audio, sample_rate)
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)

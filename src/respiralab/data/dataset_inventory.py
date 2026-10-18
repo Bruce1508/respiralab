@@ -1,11 +1,3 @@
-"""D03: WAV header audit — duration, sample rate, channels — plus filename
-decode and checksum, with every rejection logged by filename (never silently
-dropped). Builds on D02's `inventory.sha256_of_file` for hashing and
-`filenames.parse_icbhi_filename` for the naming convention; reads only WAV
-*headers* via `soundfile.info` (no full audio decode) to stay fast and keep
-this a metadata audit, not a DSP step.
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -40,12 +32,6 @@ class DatasetInventoryRow:
 
 
 def build_dataset_inventory(root: Path) -> tuple[list[DatasetInventoryRow], list[RejectionRow]]:
-    """Audit every .wav under root: parse filename, read header, hash content.
-
-    Each file either produces exactly one DatasetInventoryRow or exactly one
-    RejectionRow (filename-parse failure or unreadable/corrupt WAV header) —
-    no file is silently skipped.
-    """
     rows: list[DatasetInventoryRow] = []
     rejections: list[RejectionRow] = []
     for path in sorted(root.glob("*.wav")):
@@ -77,7 +63,7 @@ def build_dataset_inventory(root: Path) -> tuple[list[DatasetInventoryRow], list
                 source_filename=path.name,
             )
         )
-    return rows, rejections
+    return (rows, rejections)
 
 
 def write_csv(dataclass_rows: list, out_path: Path) -> None:
@@ -95,8 +81,7 @@ def write_csv(dataclass_rows: list, out_path: Path) -> None:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Audit ICBHI WAV headers (duration/sr/channels) + filenames + checksums; "
-        "log every rejection by filename."
+        description="Audit ICBHI WAV headers (duration/sr/channels) + filenames + checksums; log every rejection by filename."
     )
     parser.add_argument("--dir", required=True, type=Path, help="Directory of .wav files to audit")
     parser.add_argument("--out", required=True, type=Path, help="Output dataset_inventory.csv path")
@@ -107,32 +92,27 @@ def main(argv: list[str] | None = None) -> int:
         help="Output rejections CSV path (default: <out>_rejections.csv)",
     )
     args = parser.parse_args(argv)
-
     if not args.dir.is_dir():
         print(f"error: --dir {args.dir} is not a directory", file=sys.stderr)
         return 1
-
     rejections_out = args.rejections_out or args.out.with_name(
         args.out.stem + "_rejections" + args.out.suffix
     )
     rows, rejections = build_dataset_inventory(args.dir)
     write_csv(rows, args.out)
     write_csv(rejections, rejections_out)
-
     n_patients = len({r.patient_id for r in rows})
     print(f"audited {len(rows)} wav files ({n_patients} unique patients) under {args.dir}")
     print(f"wrote manifest: {args.out}")
     print(f"wrote rejections: {rejections_out} ({len(rejections)} entries)")
     if len(rows) != EXPECTED_RECORDINGS:
         print(
-            f"NOTE: expected {EXPECTED_RECORDINGS} recordings, audited {len(rows)} — "
-            "documented discrepancy, not auto-corrected.",
+            f"NOTE: expected {EXPECTED_RECORDINGS} recordings, audited {len(rows)} — documented discrepancy, not auto-corrected.",
             file=sys.stderr,
         )
     if n_patients != EXPECTED_PATIENTS:
         print(
-            f"NOTE: expected {EXPECTED_PATIENTS} patients, found {n_patients} — "
-            "documented discrepancy, not auto-corrected.",
+            f"NOTE: expected {EXPECTED_PATIENTS} patients, found {n_patients} — documented discrepancy, not auto-corrected.",
             file=sys.stderr,
         )
     if rejections:

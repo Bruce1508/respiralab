@@ -1,14 +1,3 @@
-"""D16: train-only StandardScaler + logistic regression pipeline (E01).
-
-sklearn's Pipeline guarantees the scaler is fit only on the data passed to
-`.fit()` (train) — scoring on dev later only calls `.transform()`, never
-`.fit()`, so the scaler can't see val/test features by construction
-(acceptance: "no scaler fits on validation/test"). class_weight="balanced"
-on the classifier is docs/04_EXPERIMENTS.md's documented train-only
-imbalance-handling convention, needed here since the 4 classes are far
-from evenly sized (see D15's E00 support counts).
-"""
-
 from __future__ import annotations
 
 import argparse
@@ -31,10 +20,7 @@ def build_pipeline(seed: int = LOGREG_SEED) -> Pipeline:
     return Pipeline(
         [
             ("scaler", StandardScaler()),
-            (
-                "clf",
-                LogisticRegression(class_weight="balanced", max_iter=1000, random_state=seed),
-            ),
+            ("clf", LogisticRegression(class_weight="balanced", max_iter=1000, random_state=seed)),
         ]
     )
 
@@ -61,13 +47,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--seed", type=int, default=LOGREG_SEED)
     args = parser.parse_args(argv)
-
     manifest_df = pd.read_csv(args.feature_manifest)
     X_train, y_train = load_split_features(manifest_df, "train", args.cache_dir)
     X_dev, y_dev = load_split_features(manifest_df, "val", args.cache_dir)
-
     baseline_result = evaluate_pipeline(build_pipeline(args.seed), X_train, y_train, X_dev, y_dev)
-
     result = {
         "split_hash": sha256_of_file(args.splits_csv),
         "patient_counts": patient_counts(manifest_df),
@@ -75,7 +58,6 @@ def main(argv: list[str] | None = None) -> int:
         "seed": args.seed,
         "baselines": [baseline_result],
     }
-
     args.out.mkdir(parents=True, exist_ok=True)
     out_path = args.out / "dev_scores.json"
     out_path.write_text(json.dumps(result, indent=2))

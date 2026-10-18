@@ -1,7 +1,3 @@
-"""D10 tests (RED first): PSD/STFT/log-Mel computation — correct shapes,
-finite output (no silent -inf/NaN from log(0)), diagnostic figure saving.
-"""
-
 from pathlib import Path
 
 import numpy as np
@@ -33,7 +29,7 @@ def test_compute_psd_peaks_near_tone_frequency():
     audio = _tone(500.0, 2.0, sr)
     freqs, psd = compute_psd(audio, sr)
     peak_freq = freqs[np.argmax(psd)]
-    assert abs(peak_freq - 500.0) < 20.0  # within one PSD bin or so
+    assert abs(peak_freq - 500.0) < 20.0
 
 
 def test_compute_stft_shapes_are_consistent():
@@ -48,7 +44,7 @@ def test_compute_stft_handles_silence_without_negative_infinity():
     sr = 4000
     audio = np.zeros(sr * 2, dtype=np.float32)
     _, _, magnitude_db = compute_stft(audio, sr)
-    assert np.isfinite(magnitude_db).all()  # not -inf from log(0)
+    assert np.isfinite(magnitude_db).all()
 
 
 def test_compute_log_mel_shape_and_finite():
@@ -69,7 +65,7 @@ def test_compute_log_mel_handles_silence_without_negative_infinity():
 
 def test_compute_log_mel_handles_very_short_audio():
     sr = 4000
-    audio = _tone(500.0, 0.05, sr)  # 50ms, shorter than a typical n_fft
+    audio = _tone(500.0, 0.05, sr)
     log_mel = compute_log_mel(audio, sr, n_mels=32)
     assert log_mel.shape[0] == 32
     assert np.isfinite(log_mel).all()
