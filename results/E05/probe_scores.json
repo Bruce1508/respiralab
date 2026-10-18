@@ -1,0 +1,194 @@
+{
+  "protocol": "E05: frozen AST embeddings -> logistic regression, grouped CV (ADR-0001 D4b)",
+  "checkpoint": "MIT/ast-finetuned-audioset-10-10-0.4593",
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "n_trainval_patients": 105,
+  "n_trainval_cycles": 5757,
+  "seed": 42,
+  "n_splits": 5,
+  "folds": [
+    {
+      "fold": 0,
+      "n_train_patients": 85,
+      "n_val_patients": 20,
+      "n_val_cycles": 1153,
+      "macro_f1": 0.42642302331226134,
+      "per_class": {
+        "normal": {
+          "precision": 0.631404958677686,
+          "recall": 0.6552315608919382,
+          "f1": 0.6430976430976431,
+          "support": 583
+        },
+        "crackle": {
+          "precision": 0.49056603773584906,
+          "recall": 0.38461538461538464,
+          "f1": 0.4311774461028192,
+          "support": 338
+        },
+        "wheeze": {
+          "precision": 0.31176470588235294,
+          "recall": 0.3419354838709677,
+          "f1": 0.3261538461538461,
+          "support": 155
+        },
+        "both": {
+          "precision": 0.25663716814159293,
+          "recall": 0.37662337662337664,
+          "f1": 0.30526315789473685,
+          "support": 77
+        }
+      }
+    },
+    {
+      "fold": 1,
+      "n_train_patients": 85,
+      "n_val_patients": 20,
+      "n_val_cycles": 1143,
+      "macro_f1": 0.41956763618866955,
+      "per_class": {
+        "normal": {
+          "precision": 0.6554934823091247,
+          "recall": 0.6037735849056604,
+          "f1": 0.6285714285714286,
+          "support": 583
+        },
+        "crackle": {
+          "precision": 0.4766355140186916,
+          "recall": 0.478125,
+          "f1": 0.47737909516380655,
+          "support": 320
+        },
+        "wheeze": {
+          "precision": 0.3005181347150259,
+          "recall": 0.36477987421383645,
+          "f1": 0.32954545454545453,
+          "support": 159
+        },
+        "both": {
+          "precision": 0.22826086956521738,
+          "recall": 0.25925925925925924,
+          "f1": 0.24277456647398843,
+          "support": 81
+        }
+      }
+    },
+    {
+      "fold": 2,
+      "n_train_patients": 82,
+      "n_val_patients": 23,
+      "n_val_cycles": 1144,
+      "macro_f1": 0.45511805585174814,
+      "per_class": {
+        "normal": {
+          "precision": 0.6726618705035972,
+          "recall": 0.6393162393162393,
+          "f1": 0.6555652936021035,
+          "support": 585
+        },
+        "crackle": {
+          "precision": 0.5521978021978022,
+          "recall": 0.6242236024844721,
+          "f1": 0.5860058309037901,
+          "support": 322
+        },
+        "wheeze": {
+          "precision": 0.3873239436619718,
+          "recall": 0.3819444444444444,
+          "f1": 0.38461538461538464,
+          "support": 144
+        },
+        "both": {
+          "precision": 0.2073170731707317,
+          "recall": 0.1827956989247312,
+          "f1": 0.19428571428571428,
+          "support": 93
+        }
+      }
+    },
+    {
+      "fold": 3,
+      "n_train_patients": 86,
+      "n_val_patients": 19,
+      "n_val_cycles": 1197,
+      "macro_f1": 0.4758707849570481,
+      "per_class": {
+        "normal": {
+          "precision": 0.7053231939163498,
+          "recall": 0.6363636363636364,
+          "f1": 0.6690712353471596,
+          "support": 583
+        },
+        "crackle": {
+          "precision": 0.5040650406504065,
+          "recall": 0.5758513931888545,
+          "f1": 0.5375722543352601,
+          "support": 323
+        },
+        "wheeze": {
+          "precision": 0.39759036144578314,
+          "recall": 0.3728813559322034,
+          "f1": 0.3848396501457726,
+          "support": 177
+        },
+        "both": {
+          "precision": 0.2867647058823529,
+          "recall": 0.34210526315789475,
+          "f1": 0.312,
+          "support": 114
+        }
+      }
+    },
+    {
+      "fold": 4,
+      "n_train_patients": 82,
+      "n_val_patients": 23,
+      "n_val_cycles": 1120,
+      "macro_f1": 0.4469378295223758,
+      "per_class": {
+        "normal": {
+          "precision": 0.651356993736952,
+          "recall": 0.5360824742268041,
+          "f1": 0.588124410933082,
+          "support": 582
+        },
+        "crackle": {
+          "precision": 0.46216216216216216,
+          "recall": 0.5261538461538462,
+          "f1": 0.4920863309352518,
+          "support": 325
+        },
+        "wheeze": {
+          "precision": 0.39779005524861877,
+          "recall": 0.496551724137931,
+          "f1": 0.44171779141104295,
+          "support": 145
+        },
+        "both": {
+          "precision": 0.23333333333333334,
+          "recall": 0.3088235294117647,
+          "f1": 0.26582278481012656,
+          "support": 68
+        }
+      }
+    }
+  ],
+  "macro_f1_mean": 0.4447834659664206,
+  "macro_f1_sd": 0.022642936858385657,
+  "per_class_recall_mean": {
+    "normal": 0.6141534991408556,
+    "crackle": 0.5177938452885116,
+    "wheeze": 0.39161857651987664,
+    "both": 0.29392142547540534
+  },
+  "per_class_recall_sd": {
+    "normal": 0.04747812232090385,
+    "crackle": 0.09230111236226733,
+    "wheeze": 0.0605069487175414,
+    "both": 0.07571948313914148
+  },
+  "e01_cv_macro_f1_mean": 0.36536250998405473,
+  "e01_cv_macro_f1_sd": 0.03687477889076001,
+  "e06_go_stop_threshold": 0.40223728887481475,
+  "e06_decision": "go"
+}
