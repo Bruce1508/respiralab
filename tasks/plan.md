@@ -31,7 +31,7 @@ skill's default loop (RED → GREEN → regression → ruff → commit).
 - [x] **D37** — Probabilities, method label, provenance in UI. (commit `5ad0e02`; screenshot sub-deliverable not produced - no browser access this session)
 - [x] **D38** — Synthetic integration fixtures + E2E UI smoke. `tests/integration/`. (commit `b4904aa`)
 - [x] **D39** — CI lint/test/import checks + sensitive-data scan. `ci.yml`. (commit `994a010`; also fixed a real CI-breaking test gap)
-- [ ] **D40** — Inference latency/memory benchmark + packaged release. `reports/performance.md`.
+- [x] **D40** — Inference latency/memory benchmark + packaged release. `reports/performance.md`. (commit `b522e2f`)
 
 ## Phase: Launch (D41–D42)
 - [ ] **D41** — Honest technical report, citations, figure captions. `reports/final_report.md`.
