@@ -105,14 +105,17 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", required=True, type=Path)
     parser.add_argument("--n-splits", type=int, default=N_SPLITS)
     parser.add_argument("--seed", type=int, default=CV_SEED)
+    parser.add_argument(
+        "--pad-mode", choices=("zero", "repeat"), default="zero", help="D51's E08 padding ablation"
+    )
     args = parser.parse_args(argv)
 
     manifest_df = pd.read_csv(args.feature_manifest)
     cycles_df = pd.read_csv(args.cycles_csv)
     rows = build_trainval_rows(manifest_df, cycles_df)
 
-    print(f"extracting/caching embeddings for {len(rows)} cycles...")
-    X = extract_and_cache_embeddings(rows, args.audio_dir, args.embedding_cache)
+    print(f"extracting/caching embeddings for {len(rows)} cycles (pad_mode={args.pad_mode})...")
+    X = extract_and_cache_embeddings(rows, args.audio_dir, args.embedding_cache, pad_mode=args.pad_mode)
     y = rows["label4"].to_numpy()
     patient_ids = rows["patient_id"].astype(str).to_numpy()
 
