@@ -32,10 +32,13 @@ from respiralab.evaluation.group_cv import assert_no_patient_crosses_folds, make
 from respiralab.evaluation.metrics import LABEL_ORDER, score_predictions
 from respiralab.models.encoder import CHECKPOINT, EMBEDDING_DIM
 from respiralab.models.encoder_probe import build_trainval_rows
+from respiralab.models.training import should_stop_early
 
 LABEL_TO_INDEX = {label: i for i, label in enumerate(LABEL_ORDER)}
 INDEX_TO_LABEL = {i: label for label, i in LABEL_TO_INDEX.items()}
 N_SPLITS = 5
+CV_SEED = 42  # fold-splitting seed -- fixed, matches D44/D48; must NOT vary with the model seed below
+E06_MODEL_SEEDS = (13, 21, 42)  # ADR-0001 D4b pre-registered seeds for E06's robustness check
 
 
 def git_commit() -> str:
@@ -142,41 +145,25 @@ def run_epoch(model: ASTClassifier, loader, device: torch.device, optimizer=None
     return scores
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(
-        description="D49 pilot: 1 seed x 1 fold light fine-tune of the AST encoder."
-    )
-    parser.add_argument("--feature-manifest", required=True, type=Path)
-    parser.add_argument("--cycles-csv", required=True, type=Path)
-    parser.add_argument("--audio-dir", required=True, type=Path)
-    parser.add_argument("--splits-csv", required=True, type=Path)
-    parser.add_argument("--e01-cv-scores", required=True, type=Path)
-    parser.add_argument("--e05-cv-scores", required=True, type=Path)
-    parser.add_argument("--out", required=True, type=Path)
-    parser.add_argument("--fold", type=int, default=0)
-    parser.add_argument("--n-splits", type=int, default=N_SPLITS)
-    parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--unfreeze-last-n-layers", type=int, default=2)
-    parser.add_argument("--epochs", type=int, default=1)
-    parser.add_argument("--lr", type=float, default=1e-5)
-    parser.add_argument("--batch-size", type=int, default=8)
-    args = parser.parse_args(argv)
-
-    torch.manual_seed(args.seed)
-    manifest_df = pd.read_csv(args.feature_manifest)
-    cycles_df = pd.read_csv(args.cycles_csv)
-    rows = build_trainval_rows(manifest_df, cycles_df)
-
+def run_fold(
+    rows: pd.DataFrame,
+    fold: int,
+    model_seed: int,
+    args: argparse.Namespace,
+    device: torch.device,
+    feature_extractor: ASTFeatureExtractor,
+) -> dict:
+    """Train+validate one (fold, model_seed) run with validation-based early stopping."""
     y = rows["label4"].to_numpy()
     patient_ids = rows["patient_id"].astype(str).to_numpy()
-    folds = make_folds(patient_ids, y, n_splits=args.n_splits, seed=args.seed)
+    folds = make_folds(patient_ids, y, n_splits=args.n_splits, seed=CV_SEED)
     assert_no_patient_crosses_folds(patient_ids, folds)
-    train_idx, val_idx = folds[args.fold]
+    train_idx, val_idx = folds[fold]
     train_rows, val_rows = rows.iloc[train_idx], rows.iloc[val_idx]
 
-    device = select_device()
+    torch.manual_seed(model_seed)
     model = ASTClassifier(unfreeze_last_n=args.unfreeze_last_n_layers).to(device)
-    feature_extractor = ASTFeatureExtractor.from_pretrained(CHECKPOINT)
+    optimizer = torch.optim.Adam(model.trainable_parameters(), lr=args.lr)
 
     def make_loader(rows_subset: pd.DataFrame, shuffle: bool) -> DataLoader:
         dataset = RawCycleDataset(rows_subset, args.audio_dir)
@@ -189,13 +176,17 @@ def main(argv: list[str] | None = None) -> int:
 
     train_loader = make_loader(train_rows, shuffle=True)
     val_loader = make_loader(val_rows, shuffle=False)
-    optimizer = torch.optim.Adam(model.trainable_parameters(), lr=args.lr)
 
     start = time.monotonic()
-    history = []
-    for epoch in range(args.epochs):
+    history: list[dict] = []
+    best_val_macro_f1 = -1.0
+    epochs_without_improvement = 0
+    for epoch in range(args.max_epochs):
         train_scores = run_epoch(model, train_loader, device, optimizer=optimizer)
         val_scores = run_epoch(model, val_loader, device, optimizer=None)
+        best_val_macro_f1, epochs_without_improvement, stop = should_stop_early(
+            best_val_macro_f1, val_scores["macro_f1"], epochs_without_improvement, args.patience
+        )
         history.append(
             {
                 "epoch": epoch,
@@ -205,43 +196,106 @@ def main(argv: list[str] | None = None) -> int:
                 "val_loss": val_scores["loss"],
             }
         )
+        if stop:
+            break
     runtime_s = time.monotonic() - start
 
+    return {
+        "fold": fold,
+        "model_seed": model_seed,
+        "n_train_cycles": len(train_idx),
+        "n_val_cycles": len(val_idx),
+        "n_epochs_run": len(history),
+        "runtime_s": runtime_s,
+        "history": history,
+        "best_val_macro_f1": best_val_macro_f1,
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="D49: E06 bounded fine-tune of the AST encoder (pilot run or the full grid)."
+    )
+    parser.add_argument("--feature-manifest", required=True, type=Path)
+    parser.add_argument("--cycles-csv", required=True, type=Path)
+    parser.add_argument("--audio-dir", required=True, type=Path)
+    parser.add_argument("--splits-csv", required=True, type=Path)
+    parser.add_argument("--e01-cv-scores", required=True, type=Path)
+    parser.add_argument("--e05-cv-scores", required=True, type=Path)
+    parser.add_argument("--out", required=True, type=Path)
+    parser.add_argument("--grid", action="store_true", help="run all 3 seeds x n-splits folds")
+    parser.add_argument("--fold", type=int, default=0, help="single-run mode only (ignored with --grid)")
+    parser.add_argument(
+        "--model-seed", type=int, default=42, help="single-run mode only (ignored with --grid)"
+    )
+    parser.add_argument("--n-splits", type=int, default=N_SPLITS)
+    parser.add_argument("--unfreeze-last-n-layers", type=int, default=2)
+    parser.add_argument("--max-epochs", type=int, default=3)
+    parser.add_argument("--patience", type=int, default=1)
+    parser.add_argument("--lr", type=float, default=1e-5)
+    parser.add_argument("--batch-size", type=int, default=8)
+    args = parser.parse_args(argv)
+
+    manifest_df = pd.read_csv(args.feature_manifest)
+    cycles_df = pd.read_csv(args.cycles_csv)
+    rows = build_trainval_rows(manifest_df, cycles_df)
+
+    device = select_device()
+    feature_extractor = ASTFeatureExtractor.from_pretrained(CHECKPOINT)
     e01_cv = json.loads(args.e01_cv_scores.read_text())
     e05_cv = json.loads(args.e05_cv_scores.read_text())
-    e01_fold = next(f for f in e01_cv["folds"] if f["fold"] == args.fold)
-    e05_fold = next(f for f in e05_cv["folds"] if f["fold"] == args.fold)
 
+    plan = (
+        [(seed, fold) for seed in E06_MODEL_SEEDS for fold in range(args.n_splits)]
+        if args.grid
+        else [(args.model_seed, args.fold)]
+    )
+
+    runs = []
+    for model_seed, fold in plan:
+        run = run_fold(rows, fold, model_seed, args, device, feature_extractor)
+        e01_fold = next(f for f in e01_cv["folds"] if f["fold"] == fold)
+        e05_fold = next(f for f in e05_cv["folds"] if f["fold"] == fold)
+        run["same_fold_e01_macro_f1"] = e01_fold["macro_f1"]
+        run["same_fold_e05_macro_f1"] = e05_fold["macro_f1"]
+        runs.append(run)
+        print(
+            f"[seed={model_seed} fold={fold}] best val macro_f1={run['best_val_macro_f1']:.4f} "
+            f"(E01={e01_fold['macro_f1']:.4f}, E05={e05_fold['macro_f1']:.4f}) "
+            f"in {run['runtime_s']:.1f}s, {run['n_epochs_run']} epoch(s)"
+        )
+
+    best_f1s = np.array([r["best_val_macro_f1"] for r in runs])
     result = {
         "protocol": (
-            f"D49 pilot: E06 bounded fine-tune, 1 seed x 1 fold x {args.epochs} "
-            "epoch(s) (ADR-0001 D4b/D8)"
+            f"D49 {'grid' if args.grid else 'single run'}: E06 bounded fine-tune "
+            f"(ADR-0001 D4b/D8), {len(runs)} run(s)"
         ),
-        "scope": "pilot -- not the full 3-seed x 5-fold grid",
         "checkpoint": CHECKPOINT,
         "git_commit": git_commit(),
         "device": str(device),
         "cpu_count": os.cpu_count(),
         "split_hash": sha256_of_file(args.splits_csv),
-        "fold": args.fold,
-        "seed": args.seed,
+        "fold_split_seed": CV_SEED,
         "unfreeze_last_n_layers": args.unfreeze_last_n_layers,
-        "n_train_cycles": len(train_idx),
-        "n_val_cycles": len(val_idx),
-        "runtime_s": runtime_s,
-        "history": history,
-        "final_val_macro_f1": history[-1]["val_macro_f1"],
-        "same_fold_e01_macro_f1": e01_fold["macro_f1"],
-        "same_fold_e05_macro_f1": e05_fold["macro_f1"],
+        "max_epochs": args.max_epochs,
+        "patience": args.patience,
+        "lr": args.lr,
+        "runs": runs,
+        "macro_f1_mean": float(best_f1s.mean()),
+        "macro_f1_sd": float(best_f1s.std(ddof=1)) if len(best_f1s) > 1 else 0.0,
+        "e01_cv_macro_f1_mean": e01_cv["macro_f1_mean"],
+        "e05_cv_macro_f1_mean": e05_cv["macro_f1_mean"],
     }
     args.out.mkdir(parents=True, exist_ok=True)
-    out_path = args.out / "pilot_scores.json"
+    out_name = "grid_scores.json" if args.grid else "pilot_scores.json"
+    out_path = args.out / out_name
     out_path.write_text(json.dumps(result, indent=2))
     print(f"wrote {out_path}")
     print(
-        f"pilot fold {args.fold}: val macro_f1={result['final_val_macro_f1']:.4f} "
-        f"(E01={e01_fold['macro_f1']:.4f}, E05={e05_fold['macro_f1']:.4f}) "
-        f"in {runtime_s:.1f}s on {device}"
+        f"E06 macro_f1={result['macro_f1_mean']:.4f}+/-{result['macro_f1_sd']:.4f} "
+        f"vs E01 CV mean={result['e01_cv_macro_f1_mean']:.4f}, "
+        f"E05 CV mean={result['e05_cv_macro_f1_mean']:.4f}"
     )
     return 0
 
