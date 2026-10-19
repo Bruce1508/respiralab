@@ -1,0 +1,41 @@
+{
+  "protocol": "D49 pilot: E06 bounded fine-tune, 1 seed x 1 fold x 3 epoch(s) (ADR-0001 D4b/D8)",
+  "scope": "pilot -- not the full 3-seed x 5-fold grid",
+  "checkpoint": "MIT/ast-finetuned-audioset-10-10-0.4593",
+  "git_commit": "cf69bd440051535fc977ab3c5d5d43dd24ae7aa6",
+  "device": "mps",
+  "cpu_count": 14,
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "fold": 0,
+  "seed": 42,
+  "unfreeze_last_n_layers": 2,
+  "n_train_cycles": 4604,
+  "n_val_cycles": 1153,
+  "runtime_s": 1442.693939375109,
+  "history": [
+    {
+      "epoch": 0,
+      "train_macro_f1": 0.4988470736154228,
+      "train_loss": 0.884985147120122,
+      "val_macro_f1": 0.3994964640654196,
+      "val_loss": 1.0022628143920862
+    },
+    {
+      "epoch": 1,
+      "train_macro_f1": 0.6277060185401644,
+      "train_loss": 0.7084503946332286,
+      "val_macro_f1": 0.45917816524456323,
+      "val_loss": 1.0097146354008268
+    },
+    {
+      "epoch": 2,
+      "train_macro_f1": 0.6845872549636928,
+      "train_loss": 0.6229985121226539,
+      "val_macro_f1": 0.4407305312869621,
+      "val_loss": 1.0850600884372734
+    }
+  ],
+  "final_val_macro_f1": 0.4407305312869621,
+  "same_fold_e01_macro_f1": 0.3136576195737422,
+  "same_fold_e05_macro_f1": 0.42642302331226134
+}
