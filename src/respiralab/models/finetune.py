@@ -11,6 +11,7 @@ reused here) because the encoder's weights change.
 from __future__ import annotations
 
 import argparse
+import copy
 import json
 import os
 import subprocess
@@ -145,6 +146,20 @@ def run_epoch(model: ASTClassifier, loader, device: torch.device, optimizer=None
     return scores
 
 
+def collect_logits(model: ASTClassifier, loader: DataLoader, device: torch.device) -> tuple[np.ndarray, np.ndarray]:
+    """Raw per-class logits + true labels for every item in loader, in loader order."""
+    all_logits: list[np.ndarray] = []
+    all_true: list[int] = []
+    with torch.no_grad():
+        for inputs, labels in loader:
+            inputs = {k: v.to(device) for k, v in inputs.items()}
+            all_logits.append(model(inputs).cpu().numpy())
+            all_true.extend(labels.tolist())
+    logits = np.concatenate(all_logits, axis=0)
+    y_true = np.array([INDEX_TO_LABEL[i] for i in all_true])
+    return logits, y_true
+
+
 def run_fold(
     rows: pd.DataFrame,
     fold: int,
@@ -152,8 +167,14 @@ def run_fold(
     args: argparse.Namespace,
     device: torch.device,
     feature_extractor: ASTFeatureExtractor,
+    track_best_state: bool = False,
 ) -> dict:
-    """Train+validate one (fold, model_seed) run with validation-based early stopping."""
+    """Train+validate one (fold, model_seed) run with validation-based early stopping.
+
+    With track_best_state=True, the model is rolled back to its best-val-macro-F1
+    epoch's weights before returning, and that epoch's val logits/labels are
+    included -- used for D52's out-of-fold calibration, not the CV grid itself.
+    """
     y = rows["label4"].to_numpy()
     patient_ids = rows["patient_id"].astype(str).to_numpy()
     folds = make_folds(patient_ids, y, n_splits=args.n_splits, seed=CV_SEED)
@@ -180,6 +201,7 @@ def run_fold(
     start = time.monotonic()
     history: list[dict] = []
     best_val_macro_f1 = -1.0
+    best_state_dict = None
     epochs_without_improvement = 0
     for epoch in range(args.max_epochs):
         train_scores = run_epoch(model, train_loader, device, optimizer=optimizer)
@@ -187,6 +209,8 @@ def run_fold(
         best_val_macro_f1, epochs_without_improvement, stop = should_stop_early(
             best_val_macro_f1, val_scores["macro_f1"], epochs_without_improvement, args.patience
         )
+        if track_best_state and epochs_without_improvement == 0:
+            best_state_dict = copy.deepcopy(model.state_dict())
         history.append(
             {
                 "epoch": epoch,
@@ -200,7 +224,7 @@ def run_fold(
             break
     runtime_s = time.monotonic() - start
 
-    return {
+    result = {
         "fold": fold,
         "model_seed": model_seed,
         "n_train_cycles": len(train_idx),
@@ -210,6 +234,13 @@ def run_fold(
         "history": history,
         "best_val_macro_f1": best_val_macro_f1,
     }
+    if track_best_state:
+        assert best_state_dict is not None
+        model.load_state_dict(best_state_dict)
+        val_logits, val_labels = collect_logits(model, val_loader, device)
+        result["val_logits"] = val_logits
+        result["val_labels"] = val_labels
+    return result
 
 
 def main(argv: list[str] | None = None) -> int:

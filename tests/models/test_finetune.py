@@ -9,7 +9,7 @@ import torch
 from torch import nn
 
 from respiralab.models import finetune
-from respiralab.models.finetune import ASTClassifier, RawCycleDataset, run_epoch
+from respiralab.models.finetune import ASTClassifier, RawCycleDataset, collect_logits, run_epoch
 
 
 class _FakeEncoder(nn.Module):
@@ -68,6 +68,24 @@ def test_run_epoch_training_mode_updates_only_unfrozen_weights(monkeypatch):
 
     assert torch.equal(frozen_before, model.encoder.layers[0].weight)
     assert not torch.equal(unfrozen_before, model.encoder.layers[-1].weight)
+
+
+def test_collect_logits_matches_loader_order_and_labels(monkeypatch):
+    model = _patched_classifier(monkeypatch, unfreeze_last_n=1)
+    loader = [
+        ({"input_values": torch.randn(2, 5, 4)}, torch.tensor([0, 1])),
+        ({"input_values": torch.randn(3, 5, 4)}, torch.tensor([2, 3, 0])),
+    ]
+    logits, y_true = collect_logits(model, loader, torch.device("cpu"))
+
+    assert logits.shape == (5, 4)
+    assert list(y_true) == [
+        finetune.INDEX_TO_LABEL[0],
+        finetune.INDEX_TO_LABEL[1],
+        finetune.INDEX_TO_LABEL[2],
+        finetune.INDEX_TO_LABEL[3],
+        finetune.INDEX_TO_LABEL[0],
+    ]
 
 
 def test_raw_cycle_dataset_labels_and_shape(tmp_path):
