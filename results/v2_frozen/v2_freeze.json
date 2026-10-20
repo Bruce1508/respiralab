@@ -1,0 +1,36 @@
+{
+  "protocol": "D52: freeze v2 (E06) -- Gate G7. No primary-test numbers used.",
+  "git_commit": "79ab2d89bb68220df31af32e4b2d87f2417d1cb1",
+  "device": "mps",
+  "split_hash": "38e11a7fa958b408af835e4dd89ba31364482b7734042606f127ef92900068da",
+  "encoder_checkpoint": "MIT/ast-finetuned-audioset-10-10-0.4593",
+  "encoder_checkpoint_sha256": "ae0c1e2ad4e1381d851fa9bf298ba13ebc9c5a914cdee2dbe427a6583869924d",
+  "final_model_seed": 42,
+  "unfreeze_last_n_layers": 2,
+  "final_epochs": 2,
+  "lr": 1e-05,
+  "batch_size": 8,
+  "calibration": {
+    "n_oof_cycles": 5757,
+    "temperature": 1.3288398109995183,
+    "ece_before": 0.08191262436902871,
+    "ece_after": 0.011164836224446126
+  },
+  "final_model": {
+    "weights_path": "results/v2_frozen/v2_model_state_dict.pt",
+    "weights_sha256": "e3ddc62d5941f7839f808d0ebcf5b3f5d8c175c6d368478ba32a812648c037ef",
+    "n_train_cycles": 5757,
+    "history": [
+      {
+        "epoch": 0,
+        "train_macro_f1": 0.4882333178156932,
+        "train_loss": 0.8848282371479251
+      },
+      {
+        "epoch": 1,
+        "train_macro_f1": 0.6132061744199107,
+        "train_loss": 0.7232571248070573
+      }
+    ]
+  }
+}
