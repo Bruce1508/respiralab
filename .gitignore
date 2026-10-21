@@ -12,6 +12,11 @@ artifacts/*
 # reports/figures/*.png is intentionally tracked: EDA/report plots are small,
 # non-sensitive (class/device/duration distributions, no raw audio) and are
 # the recruiter-facing evidence docs/06_RELEASE_AND_PORTFOLIO.md asks for.
+# Model weight files exceed GitHub's 100MB limit and don't belong in git history
+# per ADR-0001 D7 (weights are a versioned artifact loaded by sha256, e.g. HF Hub,
+# not a committed binary). Only the hash (results/v2_frozen/v2_freeze.json) is
+# tracked; the .pt file stays local.
+results/v2_frozen/v2_model_state_dict.pt
 
 # Python
 .venv/
