@@ -48,10 +48,24 @@ An adventitious event "belongs" to a breath-phase interval if their time spans *
 | Overlapping adventitious types | Assigned 4-class label |
 |---|---|
 | None | `normal` |
-| `D` only | `crackle` |
-| `Wheeze` only | `wheeze` |
-| `D` and `Wheeze` | `both` |
-| `Rhonchi` and/or `Stridor`, with no `D`/`Wheeze` overlap | **excluded** (see below) |
+| `D` (regardless of Rhonchi/Stridor also overlapping) | `crackle` |
+| `Wheeze` (regardless of Rhonchi/Stridor also overlapping) | `wheeze` |
+| `D` and `Wheeze` both overlap | `both` |
+| Only `Rhonchi` and/or `Stridor` overlap (no `D`, no `Wheeze`) | **excluded** (see below) |
+
+Precise algorithm (resolves the ambiguous case of `D`+`Rhonchi` with no `Wheeze`, or
+`Wheeze`+`Stridor` with no `D` — added 2026-10-21 before any code was written against this ADR):
+Rhonchi/Stridor are **never** themselves a reason to assign `crackle`/`wheeze`/`both`, and their
+presence never excludes a phase that already has a `D` or `Wheeze` verdict. A phase is excluded
+only when its *entire* adventitious-event set is Rhonchi/Stridor and nothing else.
+```
+has_d, has_wheeze, has_other = overlaps with D, overlaps with Wheeze, overlaps with Rhonchi/Stridor
+if has_d and has_wheeze: "both"
+elif has_d:              "crackle"
+elif has_wheeze:          "wheeze"
+elif has_other:           EXCLUDED
+else:                     "normal"
+```
 
 ### Rhonchi and Stridor are excluded from the primary mapping, not folded into `wheeze`
 
