@@ -1,0 +1,182 @@
+{
+  "protocol": "zero-shot external validation (ADR-0001 D6, docs/adr/0002-external-label-mapping.md); no tuning of any kind; separate protocol, never merged with ICBHI tables; labels are not ground truth (dataset's own Disclaimer)",
+  "n_total_phases": 52444,
+  "n_excluded_rhonchi_stridor_only": 4691,
+  "n_included_phases": 47753,
+  "label_counts": {
+    "normal": 25382,
+    "crackle": 15508,
+    "wheeze": 6496,
+    "both": 367
+  },
+  "population_and_device_shift": "HF_Lung_V1: adult (TSECC emergency/critical-care + RCW/RCC respiratory-care-ward residents), devices Littmann 3200 stethoscope ('steth_') and custom HF_Type-1 multichannel recorder ('trunc_'). ICBHI: different patient population and device mix entirely (see docs/03_DATA_AND_EVALUATION_CONTRACT.md).",
+  "e01": {
+    "model": "logistic_regression (E01, frozen per reports/model_freeze.md, Gate G4)",
+    "n_phases_evaluated": 47749,
+    "n_phases_skipped_invalid_audio": 4,
+    "macro_f1": 0.2164813294915686,
+    "per_class": {
+      "normal": {
+        "precision": 0.6211000076283469,
+        "recall": 0.3208037825059102,
+        "f1": 0.4230819195094702,
+        "support": 25380
+      },
+      "crackle": {
+        "precision": 0.3910837259876767,
+        "recall": 0.13916295866382924,
+        "f1": 0.2052794292508918,
+        "support": 15507
+      },
+      "wheeze": {
+        "precision": 0.18103109012199922,
+        "recall": 0.28329484218629714,
+        "f1": 0.2209016147427817,
+        "support": 6495
+      },
+      "both": {
+        "precision": 0.008492457010233148,
+        "recall": 0.43869209809264303,
+        "f1": 0.01666235446313066,
+        "support": 367
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "normal",
+        "crackle",
+        "wheeze",
+        "both"
+      ],
+      "matrix": [
+        [
+          8142,
+          3006,
+          4492,
+          9740
+        ],
+        [
+          3701,
+          2158,
+          3731,
+          5917
+        ],
+        [
+          1183,
+          332,
+          1840,
+          3140
+        ],
+        [
+          83,
+          22,
+          101,
+          161
+        ]
+      ]
+    },
+    "icbhi_score": {
+      "specificity": 0.3208037825059102,
+      "sensitivity": 0.18592695247887703,
+      "score": 0.2533653674923936,
+      "n_true_normal": 25380,
+      "n_true_abnormal": 22369,
+      "correct_normal": 8142,
+      "correct_abnormal": 4159
+    },
+    "bootstrap_macro_f1_by_recording": {
+      "point_estimate": 0.2164813294915686,
+      "ci_lower": 0.21122912867826088,
+      "ci_upper": 0.22178979587948788,
+      "ci_level": 0.95,
+      "n_replicates": 1000,
+      "n_patients": 9163,
+      "seed": 42
+    }
+  },
+  "v2": {
+    "model": "AST bounded fine-tune (E06, frozen per reports/v2_model_freeze.md, Gate G7)",
+    "n_phases_evaluated": 2000,
+    "sample_size_requested": 2000,
+    "sample_seed": 42,
+    "macro_f1": 0.3024768441218518,
+    "per_class": {
+      "normal": {
+        "precision": 0.6188734455010972,
+        "recall": 0.7958607714016933,
+        "f1": 0.6962962962962963,
+        "support": 1063
+      },
+      "crackle": {
+        "precision": 0.5901639344262295,
+        "recall": 0.055384615384615386,
+        "f1": 0.10126582278481013,
+        "support": 650
+      },
+      "wheeze": {
+        "precision": 0.33093525179856115,
+        "recall": 0.5073529411764706,
+        "f1": 0.4005805515239477,
+        "support": 272
+      },
+      "both": {
+        "precision": 0.0064516129032258064,
+        "recall": 0.06666666666666667,
+        "f1": 0.011764705882352941,
+        "support": 15
+      }
+    },
+    "confusion_matrix": {
+      "labels": [
+        "normal",
+        "crackle",
+        "wheeze",
+        "both"
+      ],
+      "matrix": [
+        [
+          846,
+          23,
+          136,
+          58
+        ],
+        [
+          436,
+          36,
+          135,
+          43
+        ],
+        [
+          79,
+          2,
+          138,
+          53
+        ],
+        [
+          6,
+          0,
+          8,
+          1
+        ]
+      ]
+    },
+    "icbhi_score": {
+      "specificity": 0.7958607714016933,
+      "sensitivity": 0.18676627534685167,
+      "score": 0.4913135233742725,
+      "n_true_normal": 1063,
+      "n_true_abnormal": 937,
+      "correct_normal": 846,
+      "correct_abnormal": 175
+    },
+    "bootstrap_macro_f1_by_recording": {
+      "point_estimate": 0.3024768441218518,
+      "ci_lower": 0.2828118285100101,
+      "ci_upper": 0.31978006929767044,
+      "ci_level": 0.95,
+      "n_replicates": 1000,
+      "n_patients": 1742,
+      "seed": 42
+    }
+  }
+}
