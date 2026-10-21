@@ -1,0 +1,50 @@
+{
+  "protocol": "D54: ad hoc file + label audit of the downloaded HF_Lung_V1 archive (not yet a formal module; see source-notes.md and docs/adr/0002-external-label-mapping.md)",
+  "source": "https://gitlab.com/techsupportHF/HF_Lung_V1",
+  "retrieved": "2026-10-21",
+  "license": "CC BY 4.0 (Heroic-Faith Medical Science Co. Ltd.)",
+  "splits": {
+    "train": {
+      "n_wav": 7809,
+      "n_label_txt": 7809,
+      "missing_label_for_wav": 0,
+      "missing_wav_for_label": 0,
+      "malformed_label_lines": 0,
+      "event_counts": {"I": 27223, "E": 15601, "D": 13794, "Wheeze": 7027, "Rhonchi": 3780, "Stridor": 657},
+      "device_prefix_counts": {"steth": 3254, "trunc": 4555},
+      "n_unique_date_tokens_subject_proxy": 130
+    },
+    "test": {
+      "n_wav": 1956,
+      "n_label_txt": 1956,
+      "missing_label_for_wav": 0,
+      "missing_wav_for_label": 0,
+      "malformed_label_lines": 0,
+      "event_counts": {"I": 6872, "E": 2748, "D": 1812, "Wheeze": 1430, "Rhonchi": 960, "Stridor": 29},
+      "device_prefix_counts": {"steth": 1250, "trunc": 706},
+      "n_unique_date_tokens_subject_proxy": 41
+    }
+  },
+  "totals_match_readme_exactly": true,
+  "totals": {
+    "n_wav": 9765,
+    "I": 34095,
+    "E": 18349,
+    "D_crackle": 15606,
+    "Wheeze": 8457,
+    "Rhonchi": 4740,
+    "Stridor": 686
+  },
+  "d_event_exact_phase_match_check": {
+    "note": "fraction of D (crackle) events whose start/end exactly equal an I or E phase in the test split -- confirms overlap-based (not exact-match) assignment is needed, per ADR-0002",
+    "split": "test",
+    "d_total": 1812,
+    "d_exact_match_to_a_phase": 1570,
+    "fraction": 0.8664
+  },
+  "caveats": [
+    "subject-count proxy (unique date tokens in filenames) is NOT a verified patient ID -- the dataset's own README states same-date files are 'very likely' the same subject, not certainly so",
+    "dataset's own Disclaimer: labels are 'not ground truth'; provider disclaims responsibility for label accuracy",
+    "HF_Lung is adult-sourced (TSECC emergency/critical-care + RCW/RCC respiratory-care residents), not pediatric -- unlike SPRSound"
+  ]
+}

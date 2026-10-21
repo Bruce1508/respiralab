@@ -2,6 +2,7 @@
 data/raw/
 data/interim/
 data/processed/
+data/external/
 artifacts/*
 # artifacts/features_cache/ is intentionally tracked: extracted numeric
 # features (log-mel stats etc.), not raw audio — needed by the Streamlit
