@@ -1,0 +1,12 @@
+{
+  "mean_path": "results/v2_frozen/ood_gate_mean.npy",
+  "mean_sha256": "05cf87ec1437400381c6d1088dd2a0dfe91d0a439e283292304be0c09a4ceb92",
+  "cov_inv_path": "results/v2_frozen/ood_gate_cov_inv.npy",
+  "cov_inv_sha256": "3fc4c95e1216901423497af1b9299628874d7fb19fe1ce3db60470a2b4c1a3d0",
+  "threshold": 42.135809557889324,
+  "percentile": 99.0,
+  "n_train_cycles": 5757,
+  "train_distance_mean": 27.105951359277235,
+  "train_distance_max": 49.12219521298169,
+  "weights_sha256_used": "e3ddc62d5941f7839f808d0ebcf5b3f5d8c175c6d368478ba32a812648c037ef"
+}
