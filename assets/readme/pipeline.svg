@@ -2,22 +2,31 @@
   <title id="title">RespiraLab signal pipeline</title>
   <desc id="desc">Respiratory audio moves through validation, patient-disjoint splitting, DSP, model comparison, evaluation, and a research demo.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b0d12"/><stop offset="1" stop-color="#12101a"/></linearGradient>
-    <linearGradient id="neon" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#67e8f9"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/></linearGradient>
-    <filter id="glow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b0d12"/><stop offset="1" stop-color="#0e1216"/></linearGradient>
     <style>
-      .eyebrow{font:600 18px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:5px;fill:#8b8398}.heading{font:700 38px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}.label{font:700 21px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}.sub{font:500 15px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#9992a3}.num{font:700 16px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#0b0d12}
+      .eyebrow{font:600 17px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:4px;fill:#8b8398}
+      .heading{font:700 34px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}
+      .label{font:700 19px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}
+      .sub{font:500 14px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#8e889a}
+      .num{font:700 16px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#0b0d12}
     </style>
   </defs>
-  <rect width="1400" height="680" rx="34" fill="url(#bg)"/><rect x="1" y="1" width="1398" height="678" rx="33" fill="none" stroke="#30283a" stroke-width="2"/>
-  <text class="eyebrow" x="70" y="72">THE SIGNAL PATH</text><text class="heading" x="70" y="124">One breath. Seven accountable steps.</text>
-  <path d="M105 302H1295" stroke="#292431" stroke-width="7" stroke-linecap="round"/><path d="M105 302H1295" stroke="url(#neon)" stroke-width="3" stroke-linecap="round" filter="url(#glow)"/>
-  <g transform="translate(75 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#67e8f9"/><text class="num" x="25" y="98">1</text><text class="label" x="24" y="42">INGEST</text><text class="sub" x="24" y="133">WAV + expert</text><text class="sub" x="24" y="156">annotations</text></g>
-  <g transform="translate(258 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#7dd3fc"/><text class="num" x="25" y="98">2</text><text class="label" x="24" y="42">VALIDATE</text><text class="sub" x="24" y="133">audio, bounds,</text><text class="sub" x="24" y="156">provenance</text></g>
-  <g transform="translate(441 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#a78bfa"/><text class="num" x="25" y="98">3</text><text class="label" x="24" y="42">SPLIT</text><text class="sub" x="24" y="133">patient-disjoint</text><text class="sub" x="24" y="156">84 / 21 / 21</text></g>
-  <g transform="translate(624 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#c084fc"/><text class="num" x="25" y="98">4</text><text class="label" x="24" y="42">DSP</text><text class="sub" x="24" y="133">crop · resample</text><text class="sub" x="24" y="156">features · Mel</text></g>
-  <g transform="translate(807 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#e879f9"/><text class="num" x="25" y="98">5</text><text class="label" x="24" y="42">MODEL</text><text class="sub" x="24" y="133">classical ML</text><text class="sub" x="24" y="156">vs compact CNN</text></g>
-  <g transform="translate(990 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#f472b6"/><text class="num" x="25" y="98">6</text><text class="label" x="24" y="42">EVALUATE</text><text class="sub" x="24" y="133">macro-F1 · CI</text><text class="sub" x="24" y="156">failure analysis</text></g>
-  <g transform="translate(1173 210)"><rect width="150" height="184" rx="22" fill="#15131b" stroke="#2e2937"/><circle cx="30" cy="92" r="17" fill="#fb7185"/><text class="num" x="25" y="98">7</text><text class="label" x="24" y="42">EXPLAIN</text><text class="sub" x="24" y="133">probabilities +</text><text class="sub" x="24" y="156">provenance</text></g>
-  <rect x="70" y="484" width="1260" height="116" rx="22" fill="#0e0e13" stroke="#292431"/><circle cx="108" cy="526" r="6" fill="#34d399" filter="url(#glow)"/><text class="eyebrow" x="130" y="533" fill="#34d399">NON-NEGOTIABLE</text><text class="label" x="103" y="574">No patient leakage · no test-set tuning · no diagnosis claims</text>
+  <rect width="1400" height="680" rx="28" fill="url(#bg)"/><rect x="1" y="1" width="1398" height="678" rx="27" fill="none" stroke="#262230" stroke-width="2"/>
+  <text class="eyebrow" x="64" y="68">THE SIGNAL PATH</text>
+  <text class="heading" x="64" y="112">One breath. Seven accountable steps.</text>
+
+  <path d="M106 302H1294" stroke="#262230" stroke-width="3" stroke-linecap="round"/>
+
+  <g transform="translate(70 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">1</text><text class="label" x="24" y="42">INGEST</text><text class="sub" x="24" y="133">WAV + expert</text><text class="sub" x="24" y="156">annotations</text></g>
+  <g transform="translate(254 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">2</text><text class="label" x="24" y="42">VALIDATE</text><text class="sub" x="24" y="133">audio, bounds,</text><text class="sub" x="24" y="156">provenance</text></g>
+  <g transform="translate(438 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">3</text><text class="label" x="24" y="42">SPLIT</text><text class="sub" x="24" y="133">patient-disjoint</text><text class="sub" x="24" y="156">84 / 21 / 21</text></g>
+  <g transform="translate(622 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">4</text><text class="label" x="24" y="42">DSP</text><text class="sub" x="24" y="133">crop · resample</text><text class="sub" x="24" y="156">features · Mel</text></g>
+  <g transform="translate(806 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">5</text><text class="label" x="24" y="42">MODEL</text><text class="sub" x="24" y="133">classical ML vs</text><text class="sub" x="24" y="156">compact CNN</text></g>
+  <g transform="translate(990 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">6</text><text class="label" x="24" y="42">EVALUATE</text><text class="sub" x="24" y="133">macro-F1 · CI</text><text class="sub" x="24" y="156">failure analysis</text></g>
+  <g transform="translate(1174 210)"><rect width="156" height="184" rx="18" fill="#131119" stroke="#262230"/><circle cx="30" cy="92" r="16" fill="#67e8f9"/><text class="num" x="25" y="98">7</text><text class="label" x="24" y="42">EXPLAIN</text><text class="sub" x="24" y="133">probabilities +</text><text class="sub" x="24" y="156">provenance</text></g>
+
+  <rect x="64" y="484" width="1272" height="116" rx="18" fill="#131119" stroke="#262230"/>
+  <circle cx="102" cy="526" r="6" fill="#34d399"/>
+  <text class="eyebrow" x="124" y="533" fill="#34d399">NON-NEGOTIABLE</text>
+  <text class="label" x="97" y="574">No patient leakage · no test-set tuning · no diagnosis claims</text>
 </svg>
