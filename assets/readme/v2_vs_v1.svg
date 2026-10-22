@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">RespiraLab v2 vs v1 — three honest comparisons</title><desc id="desc">Macro-F1 comparison between v1 (E01 logistic regression) and v2 (E06 pretrained AST fine-tune) across grouped cross-validation, the primary test, and zero-shot external validation, plus v2 serving stats.</desc>
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b0d12"/><stop offset="1" stop-color="#101a1c"/></linearGradient>
+    <linearGradient id="barv1" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#918a99"/><stop offset="1" stop-color="#b8b0c4"/></linearGradient>
+    <linearGradient id="barv2" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#67e8f9"/><stop offset=".55" stop-color="#34d399"/><stop offset="1" stop-color="#fbbf24"/></linearGradient>
+    <filter id="glow2"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <style>.eye{font:600 18px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:5px;fill:#8b8398}.head{font:700 36px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}.proto{font:700 19px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#e9e2dc}.value{font:700 19px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}.small{font:500 14px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#918a99}.stat{font:800 30px ui-monospace,SFMono-Regular,Menlo,monospace;fill:#f5f0e8}.caption{font:600 13px ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:2px;fill:#aaa1af}.legend{font:600 14px ui-monospace,SFMono-Regular,Menlo,monospace}</style>
+  </defs>
+  <rect width="1400" height="760" rx="34" fill="url(#bg2)"/><rect x="1" y="1" width="1398" height="758" rx="33" fill="none" stroke="#243030" stroke-width="2"/>
+  <text class="eye" x="70" y="72">SAME TASK · STRICTER EVIDENCE · v1 vs v2</text>
+  <text class="head" x="70" y="122">Pretrained audio wins honestly, three times over.</text>
+  <text class="small" x="70" y="158">Macro-F1, each protocol run exactly once per model — never re-tuned after the fact</text>
+
+  <rect x="1050" y="60" width="14" height="14" rx="3" fill="url(#barv1)"/><text class="legend" x="1072" y="72" fill="#c9c3cf">v1 · E01</text>
+  <rect x="1050" y="86" width="14" height="14" rx="3" fill="url(#barv2)"/><text class="legend" x="1072" y="98" fill="#c9c3cf">v2 · E06 AST</text>
+
+  <text class="proto" x="70" y="210">GROUPED CV (5-FOLD)</text>
+  <rect x="430" y="188" width="700" height="24" rx="12" fill="#1c232a"/><rect x="430" y="188" width="256" height="24" rx="12" fill="url(#barv1)"/><text class="value" x="1150" y="206">0.3654</text>
+  <rect x="430" y="222" width="700" height="24" rx="12" fill="#1c232a"/><rect x="430" y="222" width="336" height="24" rx="12" fill="url(#barv2)" filter="url(#glow2)"/><text class="value" x="1150" y="240">0.4791</text>
+
+  <text class="proto" x="70" y="300">PRIMARY TEST (ONE-TIME)</text>
+  <rect x="430" y="278" width="700" height="24" rx="12" fill="#1c232a"/><rect x="430" y="278" width="200" height="24" rx="12" fill="url(#barv1)"/><text class="value" x="1150" y="296">0.2861</text>
+  <rect x="430" y="312" width="700" height="24" rx="12" fill="#1c232a"/><rect x="430" y="312" width="365" height="24" rx="12" fill="url(#barv2)" filter="url(#glow2)"/><text class="value" x="1150" y="330">0.5208</text>
+
+  <text class="proto" x="70" y="390">EXTERNAL ZERO-SHOT (HF_LUNG_V1)</text>
+  <rect x="430" y="368" width="700" height="24" rx="12" fill="#1c232a"/><rect x="430" y="368" width="152" height="24" rx="12" fill="url(#barv1)"/><text class="value" x="1150" y="386">0.2165</text>
+  <rect x="430" y="402" width="700" height="24" rx="12" fill="#1c232a"/><rect x="430" y="402" width="212" height="24" rx="12" fill="url(#barv2)" filter="url(#glow2)"/><text class="value" x="1150" y="420">0.3025</text>
+
+  <line x1="70" y1="460" x2="1330" y2="460" stroke="#243030"/>
+  <text class="eye" x="70" y="500">v2 SERVING — D56</text>
+  <g transform="translate(70 525)"><rect width="300" height="145" rx="20" fill="#121a1a" stroke="#223029"/><text class="stat" x="25" y="60">sha256</text><text class="caption" x="25" y="96">HASH-VERIFIED WEIGHTS</text><text class="small" x="25" y="121">Hugging Face Hub · refuses on mismatch</text></g>
+  <g transform="translate(400 525)"><rect width="300" height="145" rx="20" fill="#121a1a" stroke="#223029"/><text class="stat" x="25" y="60">42.14</text><text class="caption" x="25" y="96">OOD GATE THRESHOLD</text><text class="small" x="25" y="121">Mahalanobis · fit on train only</text></g>
+  <g transform="translate(730 525)"><rect width="300" height="145" rx="20" fill="#121a1a" stroke="#223029"/><text class="stat" x="25" y="60">247</text><text class="caption" x="25" y="96">TESTS PASSING</text><text class="small" x="25" y="121">fresh clone · zero real data needed</text></g>
+  <g transform="translate(1060 525)"><rect width="270" height="145" rx="20" fill="#121a1a" stroke="#223029"/><text class="stat" x="25" y="60">D43–D57</text><text class="caption" x="25" y="96">v2 ROADMAP DONE</text><text class="small" x="25" y="121">gates G7 + G8 PASS</text></g>
+
+  <text class="small" x="70" y="715">Honest, not perfect: v2's OOF-fit calibration worsens test ECE, and external crackle recall is only 0.055 — both disclosed, not hidden.</text>
+</svg>

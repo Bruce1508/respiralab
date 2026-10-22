@@ -14,9 +14,10 @@ Built for **Hack Canada 2026** 🇨🇦
 [![PyTorch](https://img.shields.io/badge/PyTorch-CNN-f472b6?style=flat-square&logo=pytorch&logoColor=white)](https://pytorch.org/)
 [![scikit-learn](https://img.shields.io/badge/scikit--learn-ML-a78bfa?style=flat-square&logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![Streamlit](https://img.shields.io/badge/Streamlit-Demo-fb7185?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![Tests](https://img.shields.io/badge/tests-235%20passing-34d399?style=flat-square)](#proof-not-hype)
+[![Tests](https://img.shields.io/badge/tests-247%20passing-34d399?style=flat-square)](#proof-not-hype)
 [![Evaluation](https://img.shields.io/badge/evaluation-patient--grouped%205--fold%20CV-67e8f9?style=flat-square)](#v2--pretrained-audio-stricter-evidence)
 [![External validation](https://img.shields.io/badge/external-zero--shot%20HF__Lung__V1-a78bfa?style=flat-square)](#zero-shot-external-validation)
+[![v2 serving](https://img.shields.io/badge/v2%20serving-hash--verified%20%2B%20OOD%20gate-34d399?style=flat-square)](#v2-serving--hash-verified-weights--an-ood-gate)
 [![License: MIT](https://img.shields.io/badge/license-MIT-fbbf24?style=flat-square)](LICENSE)
 
 > **Research only — not a diagnostic device.** RespiraLab classifies respiratory sound events. It does not detect asthma, COPD, pneumonia, or any other disease, and its output must not guide medical decisions.
@@ -68,6 +69,14 @@ The protocol changes were recorded before their results existed:
 
 - [ADR-0001 — pretrained encoder, grouped CV, calibration, and external-validation policy](docs/adr/0001-v2-pretrained-encoder-and-evaluation.md)
 - [ADR-0002 — HF_Lung breath-phase label mapping and exclusions](docs/adr/0002-external-label-mapping.md)
+
+<img src="assets/readme/v2_vs_v1.svg" alt="v1 vs v2 macro-F1 across grouped CV, primary test, and external zero-shot validation, plus v2 serving stats" width="100%" />
+
+### v2 serving — hash-verified weights + an OOD gate
+
+v2's fine-tuned weights (328.86 MB) exceed GitHub's 100 MB file limit, so they are **not committed to git**. They are hosted on [Hugging Face Hub](https://huggingface.co/bruce1508/respiralab-v2) and downloaded on demand; every load re-computes the file's sha256 against the hash recorded at freeze time and **refuses to run on any mismatch** — no silent fallback to possibly-wrong weights.
+
+A second guardrail, a train-fit **out-of-distribution gate**, checks every input's Mahalanobis distance from the training embedding distribution (threshold `42.14`, 99th percentile, fit on the same 5,757 train+val cycles) before predicting. Verified on both real and synthetic input: a real ICBHI cycle scores `25.57` and is accepted; a synthetic sine tone scores `92.54` and is correctly rejected. The Streamlit demo exposes v2 as a second model option once a weights repo is configured, with hash-mismatch and OOD-rejection errors surfaced as readable messages instead of a crash.
 
 ## v1 pipeline — from `.wav` to an honest answer
 
@@ -141,7 +150,7 @@ uv run pytest -q
 uv run respiralab --version
 ```
 
-Expected repository state at this milestone: `236 passed` with the local real-data cache. On a fresh clone without that cache, the same suite reports `235 passed, 1 skipped`; Ruff remains clean.
+Expected repository state at this milestone: `247 passed` — identical on a genuinely fresh clone with no ICBHI/HF_Lung data or Hugging Face credentials present (re-verified for D57). Ruff remains clean.
 
 ### 3. Launch the local demo
 
@@ -207,12 +216,11 @@ This is a research prototype, and the rough edges are part of the result:
 
 ### v2 and external validation
 
-- The v2 primary-test result is a second exposure after v1's D29 evaluation, not a fully unbiased first look; grouped CV and external validation carry more evidential weight.
-- OOF temperature calibration improved CV ECE but worsened test ECE (`0.0464 → 0.0949`).
-- HF_Lung's breath-phase unit does not match ICBHI's whole-cycle unit, so their absolute scores are not directly comparable.
-- E06 external evaluation covers a stratified sample of 2,000 out of 47,753 mapped phases because full AST inference was compute-bounded; v1's cheaper E01 baseline covered 47,749 valid phases.
-- HF_Lung uses a different adult population and device mix, and its provider explicitly says its labels are not ground truth.
+- The v2 primary-test result is a second exposure after v1's D29 evaluation, not a fully unbiased first look; grouped CV and external validation carry more evidential weight (calibration detail above).
+- HF_Lung's breath-phase unit does not match ICBHI's whole-cycle unit, so their absolute scores are not directly comparable; it is also a different adult population and device mix, and its provider explicitly says its labels are not ground truth.
+- E06 external evaluation covers a stratified sample of 2,000 out of 47,753 mapped phases because full AST inference was compute-bounded (~12h estimated); v1's cheaper E01 baseline covered 47,749 valid phases.
 - External crackle recall is only `0.055` for v2, while the sampled `both` class has just 15 examples—neither weakness is hidden behind the aggregate score.
+- v2.1 candidates not yet pursued: fusing E07's balanced-sampling improvement for the minority classes, and repeating v1's noise-robustness/error-analysis studies against v2.
 
 Read the full [model card](reports/model_card.md), [robustness study](reports/robustness.md), [error analysis](reports/error_analysis.md), [performance benchmark](reports/performance.md), and [v2 external-validation report](reports/external_validation.md).
 
@@ -220,7 +228,7 @@ Read the full [model card](reports/model_card.md), [robustness study](reports/ro
 
 **v1.0 is complete** through D42: reproducible core, frozen evaluation, offline inference, Streamlit UI, CI, performance benchmark, technical report, and fresh-clone walkthrough all passed Gates G1–G6. See [`demo_script.md`](demo_script.md) and [`release_notes_v1.0.md`](release_notes_v1.0.md).
 
-**v2 is in progress** across D43–D57. The pretrained encoder, grouped-CV experiments, frozen E06 model, second primary-test evaluation, and HF_Lung audit are complete through D54. The D55 zero-shot run and report have been produced locally and await task closure; hash-verified v2 serving (D56) and the v2 release gate/documentation pass (D57) remain.
+**v2 is complete** through D57: the pretrained AST encoder, grouped-CV model selection, Gate G7 freeze + calibration, the one-time primary-test second exposure, zero-shot external validation on HF_Lung_V1, hash-verified Hugging Face Hub serving with an OOD gate, and an updated model card/final report/release notes all passed Gates G7–G8. See [`release_notes_v2.0.md`](release_notes_v2.0.md); open v2.1 candidates are listed under Known limits above.
 
 <div align="center">
 
@@ -234,8 +242,8 @@ If this project helps your research or review, consider leaving a ⭐ and—more
 
 ## Acknowledgements
 
-- The [ICBHI 2017 Respiratory Sound Database](https://bhichallenge.med.auth.gr/node/50) and its original contributors.
-- The open-source communities behind NumPy, SciPy, librosa, scikit-learn, PyTorch, Matplotlib, Streamlit, pytest, and Ruff.
+- The [ICBHI 2017 Respiratory Sound Database](https://bhichallenge.med.auth.gr/node/50) and its original contributors; the [HF_Lung_V1](https://gitlab.com/techsupportHF/HF_Lung_V1) team for a CC BY 4.0 external validation dataset.
+- The open-source communities behind NumPy, SciPy, librosa, scikit-learn, PyTorch, Hugging Face (Transformers + Hub), Matplotlib, Streamlit, pytest, and Ruff.
 
 ## License
 

@@ -12,7 +12,7 @@
   <line x1="70" y1="437" x2="1330" y2="437" stroke="#302a36"/>
   <g transform="translate(70 480)"><rect width="230" height="145" rx="20" fill="#141219" stroke="#2e2937"/><text class="stat" x="25" y="60">6,898</text><text class="caption" x="25" y="96">REAL CYCLES</text><text class="small" x="25" y="121">920 recordings</text></g>
   <g transform="translate(330 480)"><rect width="230" height="145" rx="20" fill="#141219" stroke="#2e2937"/><text class="stat" x="25" y="60">0</text><text class="caption" x="25" y="96">PATIENT OVERLAP</text><text class="small" x="25" y="121">primary protocol</text></g>
-  <g transform="translate(590 480)"><rect width="230" height="145" rx="20" fill="#141219" stroke="#2e2937"/><text class="stat" x="25" y="60">170</text><text class="caption" x="25" y="96">TESTS PASSING</text><text class="small" x="25" y="121">synthetic E2E included</text></g>
+  <g transform="translate(590 480)"><rect width="230" height="145" rx="20" fill="#141219" stroke="#2e2937"/><text class="stat" x="25" y="60">247</text><text class="caption" x="25" y="96">TESTS PASSING</text><text class="small" x="25" y="121">synthetic E2E included</text></g>
   <g transform="translate(850 480)"><rect width="230" height="145" rx="20" fill="#141219" stroke="#2e2937"/><text class="stat" x="25" y="60">3.54 ms</text><text class="caption" x="25" y="96">P95 INFERENCE</text><text class="small" x="25" y="121">macOS arm64 · CPU</text></g>
   <g transform="translate(1110 480)"><rect width="220" height="145" rx="20" fill="#141219" stroke="#2e2937"/><text class="stat" x="25" y="60">27.7 s</text><text class="caption" x="25" y="96">FULL FEATURES</text><text class="small" x="25" y="121">all 6,898 cycles</text></g>
 </svg>
