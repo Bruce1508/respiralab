@@ -6,6 +6,8 @@ import io
 import matplotlib
 
 matplotlib.use("Agg")
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 import soundfile as sf
@@ -14,10 +16,19 @@ from matplotlib.colors import LinearSegmentedColormap
 
 from respiralab.dsp.spectrogram import compute_log_mel
 from respiralab.inference.predict import InputError, analyze_recording, build_frozen_predictor
+from respiralab.inference.v2_predict import (
+    OutOfDistributionError,
+    WeightsHashMismatchError,
+    analyze_recording_v2,
+    build_v2_predictor,
+)
 
 MAX_UPLOAD_BYTES = 20 * 1024 * 1024
 FEATURE_MANIFEST = "manifests/feature_manifest.csv"
 FEATURE_CACHE_DIR = "artifacts/features_cache"
+V2_REPO_ID = os.environ.get("RESPIRALAB_V2_REPO_ID", "bruce1508/respiralab-v2")
+V2_FREEZE_JSON = "results/v2_frozen/v2_freeze.json"
+V2_OOD_GATE_JSON = "results/v2_frozen/ood_gate.json"
 
 # Two instrument states, not a palette swap: light = strip-chart paper
 # (ECG/spirometer recorder), scope = phosphor-green CRT. See .impeccable.md.
@@ -44,6 +55,11 @@ THEMES = {
 @st.cache_resource
 def get_predictor():
     return build_frozen_predictor(FEATURE_MANIFEST, FEATURE_CACHE_DIR)
+
+
+@st.cache_resource
+def get_v2_predictor(repo_id: str):
+    return build_v2_predictor(repo_id, V2_FREEZE_JSON, V2_OOD_GATE_JSON)
 
 
 def inject_css(tokens: dict[str, str]) -> None:
@@ -191,6 +207,18 @@ def main() -> None:
         unsafe_allow_html=True,
     )
 
+    st.markdown("<div class='lab-eyebrow'>model</div>", unsafe_allow_html=True)
+    model_options = ["v1 — logistic regression (frozen, E01)"]
+    if V2_REPO_ID:
+        model_options.append("v2 — AST fine-tune (hash-verified, OOD-gated)")
+    else:
+        st.caption(
+            "v2 unavailable: set RESPIRALAB_V2_REPO_ID to the Hugging Face Hub repo hosting "
+            "the v2 weights to enable it."
+        )
+    model_choice = st.radio("Model", model_options, label_visibility="collapsed")
+    use_v2 = model_choice.startswith("v2")
+
     st.markdown("<div class='lab-eyebrow'>input</div>", unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload a mono WAV file", type=["wav"])
     if uploaded_file is None:
@@ -224,8 +252,18 @@ def main() -> None:
         bounds = (start_s, end_s)
 
     try:
-        predictor = get_predictor()
-        result = analyze_recording(predictor, audio, sample_rate, bounds=bounds)
+        if use_v2:
+            predictor = get_v2_predictor(V2_REPO_ID)
+            result = analyze_recording_v2(predictor, audio, sample_rate, bounds=bounds)
+        else:
+            predictor = get_predictor()
+            result = analyze_recording(predictor, audio, sample_rate, bounds=bounds)
+    except OutOfDistributionError as exc:
+        st.error(f"Rejected by the out-of-distribution gate: {exc}")
+        return
+    except WeightsHashMismatchError as exc:
+        st.error(f"v2 model weights failed integrity verification, refusing to predict: {exc}")
+        return
     except InputError as exc:
         st.error(f"Could not analyze this audio: {exc}")
         return
