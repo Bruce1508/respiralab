@@ -88,3 +88,102 @@ recording analysis; any claim of disease detection.
 
 **Gate G5 decision: PASS.** No diagnosis claims are made; limitations are
 explicit. Product phase (D35+) may proceed.
+
+---
+
+# v2 model card (D56/D57, Gate G8)
+
+## What this is — and is not
+
+Same scope as v1 above: **sound-event labels** (Normal/Crackle/Wheeze/Both)
+for expert-annotated respiratory cycles. **Still not a diagnostic device.**
+v2 changes the model, not the claim.
+
+## Model
+
+- **Frozen model:** E06 — pretrained AST encoder (`MIT/ast-finetuned-audioset-10-10-0.4593`,
+  AudioSet-pretrained), last 2 transformer blocks + layernorm + a new linear
+  head bounded-fine-tuned (`unfreeze_last_n_layers=2`, `lr=1e-5`,
+  `final_epochs=2`). Frozen at commit `79ab2d8` (`reports/v2_model_freeze.md`,
+  weights sha256 `e3ddc62d...`), Gate G7 PASS.
+- **Alternatives considered and rejected:** frozen-embedding probe (E05,
+  macro_f1=0.4448±0.0226) — E06 clears E05's own mean+1sd bar
+  (0.4791±0.0401 > 0.4674); repeat-pad (E08, macro_f1=0.4243±0.0298) loses
+  to zero-pad (D51); balanced_sampling (E07, both_recall=0.3683±0.1067 vs
+  reference 0.2634±0.1516) clearly wins on the minority class but was **not**
+  fused into v2 — single-factor discipline per ADR-0001, flagged as a v2.1
+  candidate rather than bolted on without its own isolated validation.
+
+## Performance (primary, patient-disjoint protocol — kept separate from v1's table above)
+
+| protocol | model | macro_f1 | 95% CI | source |
+|---|---|---:|---:|---|
+| grouped CV (5-fold, 3 seeds) | E06 | 0.4791 | ±0.0401 | `results/E06/grid_scores.json` |
+| grouped CV (5-fold, 3 seeds) | E01 (recomputed reference) | 0.3654 | ±0.0330 | `results/E01_cv/cv_scores.json` |
+| **primary test (one-time, second exposure, D53)** | **E06 (v2)** | **0.5208** | **[0.416, 0.558]** | `reports/v2_test_results.json` |
+| primary test (one-time, second exposure, D53) | E01 (refit reference) | 0.2861 | [0.233, 0.316] | `reports/v2_test_results.json` |
+| external zero-shot (HF_Lung_V1, no tuning, D55) | v2 (2,000-phase stratified sample) | 0.3025 | — | `reports/external_validation.json` |
+| external zero-shot (HF_Lung_V1, no tuning, D55) | E01 (full corpus) | 0.2165 | — | `reports/external_validation.json` |
+
+v2 beats E01 on every protocol above — CV, primary test, and external —
+and the primary test score (0.5208) sits consistent with (slightly above)
+v2's own CV estimate, not an isolated fluke. The external numbers are a
+**separate protocol table**, never merged with the ICBHI rows above
+(different unit of analysis: breath phase, not whole cycle — ADR-0002).
+
+## Known limitations (all independently verified, not assumed)
+
+1. **Calibration regresses on test, opposite of v1's direction** — v2's
+   OOF-fit temperature (1.3288) *increases* test ECE (0.0464→0.0949),
+   while E01's (fit the same way) *decreases* it (0.1273→0.0495), D53.
+   Argmax predictions and macro-F1 are unaffected by temperature; only
+   confidence calibration is implicated. Flagged as a v2.1 investigation,
+   not explained away.
+2. **External crackle recall is weak** — 0.055 on HF_Lung_V1 (D55), lower
+   than E01's 0.139 on the same data, despite v2 winning on overall
+   macro-F1. A real, disclosed weak point, not hidden behind the headline
+   number.
+3. **External validation used a stratified sample for v2, not the full
+   corpus** (2,000 of ~45k phases, seed 42, D55) — real throughput
+   benchmarking showed the full run would take ~12 hours; E01 (cheap) still
+   ran on the full corpus. The external macro-F1 therefore carries slightly
+   more sampling variance for v2 than for E01.
+4. **Weights are not committed to git** — 328.86MB exceeds GitHub's 100MB
+   limit (D55). Served from Hugging Face Hub (`bruce1508/respiralab-v2`),
+   downloaded and sha256-verified against `results/v2_frozen/v2_freeze.json`
+   before every load; a hash mismatch is a hard refusal (D56).
+5. **OOD gate is a Mahalanobis heuristic on v2's own embeddings, fit on
+   5,757 train+val cycles only** (threshold=42.136 at p99, D56) — it rejects
+   inputs far from ICBHI's own recording conditions, but passing the gate is
+   not itself evidence of correctness; it only screens out clearly
+   off-distribution input (e.g. non-respiratory audio).
+6. **All of v1's limitations still apply where unchanged** — dataset scope
+   (126 patients, 4 devices), ICBHI Score's Normal-specificity blind spot;
+   noise robustness and error-analysis studies (D31/D32) were run against
+   E01 and have not been repeated against v2.
+
+## Intended use
+
+Same as v1: research/educational demonstration. **Not suitable for:** any
+clinical, diagnostic, or patient-facing decision; any claim of disease
+detection. v2 additionally requires network access (to Hugging Face Hub)
+at first load, unlike v1's git-committed, fully offline frozen pipeline.
+
+## Gate G8 go/no-go checklist (`planning/QUALITY_GATES.md`)
+
+1. One-time second-exposure test report? Yes — `reports/v2_test_results.json`
+   (D53), run exactly once, no subsequent tuning.
+2. External zero-shot report (or documented blocker)? Yes —
+   `reports/external_validation.json`/`.md` (D55), population/device shift
+   stated explicitly, no tuning on external data.
+3. Hash-verified serving? Yes — `src/respiralab/inference/v2_predict.py`
+   (D56), verified end-to-end against the real HF Hub repo.
+4. Updated model card? Yes — this section.
+5. Fresh clone? Yes — `uv sync && uv run pytest -q` passes 247/247 on a
+   clone with no ICBHI data or HF credentials present (the 11 v2-serving
+   tests are fully synthetic/mocked; only the two manual real-data/real-HF
+   verifications in D56 and D57 required actual data and network access).
+
+**Gate G8 decision: PASS.** v1 and v2 results are reported in separate
+tables throughout this card and the final report; no diagnosis claim is
+made for either model.
